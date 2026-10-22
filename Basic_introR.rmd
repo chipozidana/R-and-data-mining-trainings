@@ -1,0 +1,400 @@
+---
+title: "Introduction to R"
+author: "DR C. ZIDANA"
+date: "STAT303-BIUST"
+output:
+  beamer_presentation:
+    colortheme: seagull
+    fonttheme: serif
+    keep_tex: yes
+    toc: yes
+    fig_caption: no
+  slidy_presentation: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Basics
+## **Basics**
+
+**R is free**
+
+* Download R from <https://cran.r-project.org>
+
+**R is a function language**
+
+* All commands in R are regarded as functions.  
++ \texttt{plot(x, y)} produces a scatter plot of \texttt{x} vs. \texttt{y}. 
+
++ Help is also a function. To obtain help on the function plot use help(plot). To obtain general help use help(), i.e.use the function help with a null argument. 
+
++ To end a session in R use the function quit().
+
+**R is an object orientated language**
+
+* All entities in R are objects. This includes vectors, matrices, data arrays, graphs, functions, and results of an analysis. 
+
+-------------
+
+**Basics**
+
+To create a vector of numbers, we use the function \texttt{c()}
+
+```{r}
+x <- c(1,3,2,5) 
+x
+```
+
+The length of a vector is found using the \texttt{length()} function.
+
+```{r}
+length(x)
+```
+
+
+--------------
+
+ **Basics**
+
+To create a matrix of numbers, we use the function \texttt{matrix()}
+
+```{r}
+y <- matrix(c(1,2,3,4), 2, 2)
+y
+```
+
+Take the square-root of each element of the matrix \texttt{y}
+```{r}
+sqrt(y)
+```
+
+-----------
+
+## **Basics**
+
+Square each element of the matrix \texttt{y}
+```{r}
+y^2
+```
+
+The square of the matrix \texttt{y}
+```{r}
+y%*%y
+```
+
+-------------------
+
+**Basics**
+
+Sequence vectors can be created in several ways.
+
+```{r}
+seq(1,10, 1)
+seq(1,10, length=10)
+seq(1,10)
+1:10
+```
+
+---------------
+
+**Basics**
+
+More sequences
+
+```{r}
+seq(1,10, 2)
+seq(1,10, length=5)
+rep(1,4)
+rep(1:4, 3)
+```
+
+
+---------
+
+**Basics**
+
+Matrices
+
+```{r}
+diag(3)
+matrix(1,3,4)
+```
+
+-----------
+
+**Basics**
+
+More matrices
+
+```{r}
+matrix(1:4, 3, 4, byrow=TRUE)
+outer(1:3, 1:3, "+")/2
+```
+
+
+---------------------
+
+ **Basics**
+
+Binding vectors into matrices
+
+```{r}
+x <- c(1,2,3)
+y <- seq(4,6)
+rbind(x,y)
+cbind(x,y)
+```
+
+
+------------------
+
+**Basics**
+
+Data frames
+
+```{r}
+subjects <- c('Jim','Jack','Joe','Mary','Jean')
+sex <- c('M', 'M', 'M', 'F', 'F')
+score <- c(85,90,75,100,70)
+D2 <- data.frame(subjects,sex,score)
+D2
+```
+
+----------------
+
+**Basics**
+
+Operations on data frames
+
+```{r}
+D2$score
+mean(D2$score)
+with(D2, mean(score))
+```
+
+------------------
+
+**Basics**
+
+Adding a new variable
+
+```{r}
+D2$letter<-c('B', 'A', 'C', 'A', 'C')
+D2
+```
+
+----------------
+
+**Reading Data** 
+
+- Read the Botswana average monthly temperature data into $R$.
+
+```{r, warning=F, message=F}
+library(readr)
+BW <- read_csv("C:/Users/zidanac/OneDrive - biust.ac.bw/BIUST/STAT 303 Linear regression/R lectures/BWtemp.csv")
+head(BW, 4)
+```
+----------------
+
+**Check Data**
+
+```{r}
+is.data.frame(BW)
+is.matrix(BW)
+```
+
+--------------
+
+**Working with Data** 
+
+Drop a variable
+```{r}
+BW$Country <- NULL
+head(BW)
+```
+
+-------------------
+
+
+```{r}
+str(BW)
+
+```
+
+-----------------
+
+**Working with Data** 
+
+- Calculate the average annual temperature
+
+```{r}
+BW.y <- aggregate(Temperature ~ Year, data=BW, mean)
+head(BW.y, 3)
+BW.y <- with(BW, tapply(Temperature, Year, mean))
+head(BW.y, 3)
+```
+
+-------------------------
+
+**Working with Data** 
+
+Calculate the average of all variables
+```{r}
+colMeans(BW)
+BW.m <- as.matrix(BW)
+apply(BW.m, 2, mean)
+```
+
+----------------------
+
+**Working with Dataframes** 
+
+Referencing values in a matrix
+```{r}
+BW.m[1,2]
+BW.m[1:3,1:2]
+```
+
+---
+
+```{r}
+BW.m[2,]
+BW.m[2,c(1,3)]
+BW.m[2,-1]
+```
+
+-----------------
+
+**Installing and Loading Packages**
+
+- to install packages u=you ned to write the following command:*install.packages("ggplot2")*
+
+- Loading a package in the workpace: *library(ggplot2)*
+
+- load data in the workspace: 
+
+
+```{r loadpack, warning=FALSE, message=F}
+library(ggplot2)
+## Use and load data in work space
+data("txhousing")
+data("mpg")
+```
+
+---------------------
+
+
+```{r}
+head(mpg)
+```
+
+-----------------------
+
+# Graphics
+
+**Enter Data**
+
+
+```{r data1}
+## House Price
+HP = c(245,312,279,308,199,219,405,324,319,255)
+##size of house
+X=c(1400,1600,1700,1875,1100,1550,2350,2450,1425,1700) 
+df1 = as.data.frame(cbind(X, HP))
+```
+
+------------------------
+
+**Histogram of House Price**
+
+```{r}
+with(df1, hist(HP))
+```
+
+
+---------------------------
+
+ **Scatter Plot  basis**
+
+```{r}
+with(df1, plot(X, HP))
+```
+
+------------------
+
+**Graphics with dplyr and ggplot2
+
+```{r, warning=FALSE, message=FALSE}
+library(dplyr)
+df1%>%
+  ggplot(aes(X, HP))+
+  geom_point()+theme_bw()
+  
+```
+
+-------------------------------
+
+**Boxplot Graphics**
+
+- A comparison boxplot of Month vs. Temperature.
+
+```{r}
+with(BW, boxplot(Temperature ~ Month))
+```
+
+-----------------------------
+
+# Resources
+
+**Install R**
+<https://www.r-project.org/>
+![](C:/Users/zidanac/OneDrive - biust.ac.bw/BIUST/STAT 303 Linear regression/R lectures/rproject.png)
+--------------------
+
+**Install R-Studio**
+
+<https://www.rstudio.com/>
+
+![](C:/Users/zidanac/OneDrive - biust.ac.bw/BIUST/STAT 303 Linear regression/R lectures/rstudio.png)
+----------------------
+
+**My R-Studio**
+
+![](C:/Users/zidanac/OneDrive - biust.ac.bw/BIUST/STAT 303 Linear regression/R lectures/rstudioshot.png)
+--------------------
+
+**Learn R**
+
+<https://www.datacamp.com/>
+![](C:/Users/zidanac/OneDrive - biust.ac.bw/BIUST/STAT 303 Linear regression/R lectures/datacamp.png)
+
+------------------
+
+
+**Learn R**
+
+<http://swirlstats.com/>
+![](C:/Users/zidanac/OneDrive - biust.ac.bw/BIUST/STAT 303 Linear regression/R lectures/swirl.png)
+
+--------------------------
+
+**Learn R**
+
+<http://tryr.codeschool.com/>
+![](C:/Users/zidanac/OneDrive - biust.ac.bw/BIUST/STAT 303 Linear regression/R lectures/tryr.png)
+
+-----------------------
+
+**Obsess about R**
+
+<http://www.r-bloggers.com/>
+![](C:/Users/zidanac/OneDrive - biust.ac.bw/BIUST/STAT 303 Linear regression/R lectures/blogger.png)
+
+------------------------
+
+**Ask questions about R**
+<https://stat.ethz.ch/mailman/listinfo/r-help>
+![](C:/Users/zidanac/OneDrive - biust.ac.bw/BIUST/STAT 303 Linear regression/R lectures/rhelp.png)
+--------------------------------------------

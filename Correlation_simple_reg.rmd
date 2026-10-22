@@ -1,0 +1,254 @@
+---
+title: "Simple Regression and Correlation"
+author: "Zidana"
+date: "BIUST"
+output:
+  beamer_presentation:
+  ioslides_presentation: default
+  slidy_presentation: default
+---
+
+# Correlation
+
+**Data Entry**
+
+```{r data1}
+## House Price
+HP = c(245,312,279,308,199,219,405,324,319,255)
+##size of house
+X=c(1400,1600,1700,1875,1100,1550,2350,2450,1425,1700) 
+df1 = as.data.frame(cbind(X, HP))
+```
+
+------------------------
+
+**Plot the series using Basic R**
+
+```{r sctterplot}
+plot(X, HP)
+```
+
+---------------------
+
+**PLot using ggplot2**
+
+```{r graphss gg, warning=FALSE}
+library(ggplot2)
+p<-ggplot(df1, aes(X, HP))+ geom_point()+
+    theme_classic()
+p
+```
+
+-------------------------
+
+**Correlation Coefficient**
+
+```{r cor1, warning=FALSE}
+cor(X,HP)
+```
+- What can you say about the relationship?
+
+-----------------------
+
+**Correlation Analysis**
+
+- remember you have to be convinced there is a linear relationship
+
+- Test the hypothesis: $H_0: \rho = 0$ vs $H_1: \rho \neq 0$
+
+
+```{r crrl}
+cor.test(X,HP)
+```
+
+
+
+------------------
+
+## Regression Analysis
+
+**The model COMPUTATION**
+
+```{r reg1}
+reg1 =lm(HP~X)
+reg1
+```
+
+
+----------------------------
+
+**Interpretation**
+
+From the output above: the estimated regression line equation can be written as follow:
+$$HP = 98.24 + 0.1098*Size$$
+
+- The intercept ($b_0$) is 98.24. It can be interpreted as the predicted sales unit for a zero house size. Recall that, we are operating in units of thousand dollars.
+
+- the regression beta coefficient for the variable house size ($b_1$), also known as the slope, is 0.11.
+
+--------------------
+
+**Add a Regression line**
+
+```{r regline,warning=FALSE}
+
+p+stat_smooth(method = "lm")+
+  theme_classic()
+
+```
+
+-------------------------
+
+**MODEL ASSESMENT**
+
+- Before using Regression equation, make sure that this model is statistically significant, that is:
+
+1. there is a statistically significant relationship between the predictor and the outcome variables
+2. the model that we built fits very well the data in our hand.
+
+```{r summary1}
+
+summary(reg1)
+```
+
+--------------------
+
+**summary outputs shows 6 components, including**:
+
+- **Call**-Shows the function call used to compute the regression model.
+- **Residuals** - Provide a quick view of the distribution of the residuals, which by definition have a mean zero. Therefore, the median should not be far from zero, and the minimum and maximum should be roughly equal in absolute value.
+- **Coefficients**- Shows the regression beta coefficients and their statistical significance. 
+-  Predictor variables, that are significantly associated to the outcome variable, are marked by stars.
+- **Residual standard error (RSE)**, **R-squared (R2)** and the **F-statistic* are metrics that are used to check how well the model fits to our data.
+
+----------------
+
+**Coefficients significance**
+
+- The coefficients table, in the model statistical summary, shows:
+
+a. the estimates of the beta coefficients
+
+b. the standard errors (SE), which defines the accuracy of beta coefficients. 
+
+- For a given beta coefficient, the SE reflects how the coefficient varies under repeated sampling. It can be used to compute the confidence intervals and the t-statistic.
+
+c.  the t-statistic and the associated p-value, which defines the statistical significance of the beta coefficients.
+
+
+
+-------------------------
+
+**ANOVA**
+
+```{r anva11}
+anova(reg1)
+```
+
+---------------
+
+**Standard errors and confidence intervals**:
+
+The standard error measures the variability/accuracy of the beta coefficients. It can be used to compute the confidence intervals of the coefficients.
+
+For example, the 95% confidence interval for the coefficient b1 is defined as $b1 +/- 2*SE(b1)$, where:
+
+- the lower limits of $b_1 = b_1 - 2*SE(b_1) =  0.10977- 2*0.03297 = 0.03374007$
+- the upper limits of $b_1 = b_1 + 2*SE(b_1) =  0.10977+ 2*0.03297 = 0.1857954$
+- That is, there is approximately a 95% chance that the interval $[0.03374007,   0.1857954]$ will contain the true value of b1. 
+- Similarly the 95% confidence interval for b0 can be computed as $b0 +/- 2*SE(b_0)$.
+
+---------------------------
+
+**CONFIDENCE INTERVALS**
+
+```{r contttt}
+confint(reg1)
+```
+
+-----------------------
+
+**Model accuracy/Goodness of Fit**
+
+The overall quality of the linear regression fit can be assessed using the following three quantities, displayed in the model summary:
+
+1. The Residual Standard Error (RSE).
+2. The R-squared (R2)
+3. F-statistic
+
+
+**Resudual Analysis**
+
+```{r resssss}
+##retrieve the residuals
+res1 = reg1$residuals
+## retrieve the fitted values
+pred1 = reg1$fitted.values
+
+```
+
+------------------------
+
+1. **Normality**
+
+
+```{r plorrs}
+shapiro.test(res1)
+hist(res1)
+
+```
+
+
+
+-------------------------------
+
+2. **Variance assuption check**: 
+
+```{r rrs}
+plot(pred1, res1)
+```
+
+-------------------
+
+3.**Linearity**
+
+
+```{r linearrrs}
+plot(res1, X)
+```
+
+----------------------------
+
+3.**Linearity**
+
+
+```{r indep}
+acf(res1)
+```
+
+---------------
+
+
+```{r nm2}
+library(lmtest)
+dwtest(HP~X)
+
+```
+
+
+------------------
+
+**YOUR Turn**
+
+1. Download the Pumpkin data set on blackboard and load it in R
+
+2. Explain the type of relationship by Perform a correlation analysis in R (correlation coefficient and./or scatter plot)
+
+3. Fit a Linear regression equation line  for Weight based on circumference
+
+4. Perform model assessment, goodness of fit and diagnosis hence conclude on whether regression model is appropriate.
+
+
+
+
+

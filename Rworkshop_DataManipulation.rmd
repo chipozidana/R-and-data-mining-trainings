@@ -1,0 +1,556 @@
+---
+title: "Data Manipulation using dplyr in R"
+author: "DR C. ZIDANA"
+institute: "BIUST: Central Botswana Mathematics and Statistical Sciences Conference (CBMSSC) III, 2024"
+date: "R WORKSHOP 14 March 2024"
+output:
+  beamer_presentation:
+    theme: "Berlin"
+    colortheme: orchid
+    fonttheme: serif
+    keep_tex: yes
+    toc: yes
+    #fig_width: 6cm 
+   #fig_height: 4cm
+  slidy_presentation: default
+---
+
+```{r gnn, echo=FALSE, message=FALSE, warning=FALSE}
+knitr::opts_chunk$set(fig.width=8, fig.height=4.8) 
+library(tidyverse)
+#https://www.kaggle.com/code/vahidehdashti/cardio-fitness-case-study
+#https://www.kaggle.com/code/yogidsba/casestudy-eda-for-cardio-good-fitness
+
+```
+
+# Topics
+
+1.  Data Importation in R
+
+2.  Data Manipulation in R
+
+3.  Descriptive Analysis in R
+
+4.  data Visualisation
+
+------------------------------------------------------------------------
+
+**Packages and Data importation**
+
+-   R is able to recognise a wide variety of file formats
+-   Every function is package based
+-   easiest way is to use spreadsheets as tab delimited file or csv \_ use readr package
+
+\fontsize{7}{8}\sf
+
+```{r datimp, message=FALSE, warning=FALSE}
+library(readr)
+## import csv
+Cardio_Fit<- read_csv("C:/Users/zidanac/OneDrive - biust.ac.bw/ZIDMA/CardioGoodFitness.csv")
+print(head(Cardio_Fit))
+
+# import white space delimited files
+all_data <- read_table(file = "C:/Users/zidanac/OneDrive - biust.ac.bw/BIUST/STAT 303 Linear regression/R lectures/BWtemp.csv", col_names = TRUE)
+
+# import tab delimited files
+all_data <- read_delim(file = "C:/Users/zidanac/OneDrive - biust.ac.bw/BIUST/STAT 303 Linear regression/R lectures/BWtemp.csv", delim = "\t")
+
+```
+
+------------------------------------------------------------------------
+
+# **CardioGoodFit Data**
+
+-   The market research team at AdRight is assigned the task to identify the profile of the typical customer for each treadmill product offered by CardioGood Fitness.
+
+-   The market research team decides to investigate whether there are differences across the product lines with respect to customer characteristics.
+
+-   The team decides to collect data on individuals who purchased a treadmill at a CardioGoodFitness retail store during the prior three months.
+
+-   The data are stored in the CardioGoodFitness.csv file
+
+------------------------------------------------------------------------
+
+# **Know your Data Variables**
+
+1.  product purchased, TM195, TM498, or TM798
+2.  gender;
+3.  age, in years;
+4.  education, in years;
+5.  relationship status, single or partnered;
+6.  annual household income ;
+7.  average number of times the customer plans to use the treadmill each week;
+8.  average number of miles the customer expects to walk/run each week;
+9.  self-rated fitness on an 1-to-5 scale, where 1 is poor shape and 5 is excellent shape
+
+------------------------------------------------------------------------
+
+# **What your Data Structure**
+
+\fontsize{7}{7}\sf
+
+```{r datstr}
+str(Cardio_Fit)
+dim(Cardio_Fit)
+Cardio_Fit$Gender<-as.factor(Cardio_Fit$Gender)
+Cardio_Fit$MaritalStatus<-as.factor(Cardio_Fit$MaritalStatus)
+
+```
+
+------------------------------------------------------------------------
+
+# Descriptive Analysis
+
+**Examine and Describe Your Data in R**
+
+-   helps describe our data in a meaningful way
+
+-   helps identify trends
+
+-   Can be represented using graphs , tables, tables (*Data Visualisation*)
+
+------------------------------------------------------------------------
+
+**Types of Statistics**
+
+![](C:/Users/zidanac/OneDrive%20-%20biust.ac.bw/ZIDMA/Descrptive_stats.png)
+
+**Measure of Central tendency**
+
+$$Mean= \frac{\sum_i{x_i}}{n},\; median =n/2, n/2+1$$
+
+```{r, mean_des}
+##find Mean of Age
+mean = mean(Cardio_Fit$Age)
+print(mean)
+
+##mode Gender
+
+median(Cardio_Fit$Age)
+
+```
+
+------------------------------------------------------------------------
+
+**Measure of Dispersion**
+
+```{r dispmsr}
+
+# Calculate the maximum
+max= max(Cardio_Fit$Age)
+# Calculate the minimum
+min = min(Cardio_Fit$Age)
+# Calculate the range
+range = max - min
+
+std = sd(Cardio_Fit$Age)
+print(std)
+
+```
+
+# Business Questions/ Hypothesis**
+
+- How many models does store have?
+- Which is most sold Model?
+- Are Male customers buying treadmill more than female customers?
+- What is the Income ,Age , Education of people buying treadmill.?
+- How many days and miles customer expect to run on treadmill?
+- What is the self rated fitness of customers buying treadmill.?
+- Are married customer buying Treadmill more than Single customers?
+- Is there any relation between Income and model.?
+- Is there any relation between Age and model ?
+- Is there any relation between self rated fitness and model .?
+- Is there any relation between education and model.?
+- Does gender has any effect on model customer buy .?
+- Does Martial status has any effect model customer buy.?
+- Is there different age groups buying different models.?
+- Relation between Age, Income and education and model bought ?
+
+
+
+
+# Dplyr package
+
+dplyr enables you manipulate data through:
+
+-   Row manipulations
+
+-   Column manipulation
+
+-   Combining/Joining table or data frame
+
+-   Loading the package
+
+```{r}
+#install.packages('tidyverse')
+    library(dplyr)
+    library(quarto)
+    library(rmarkdown)
+    ## Load data
+    data("starwars")
+    ##view
+    head(starwars)
+    str(starwars)
+```
+
+# The %\>% or \|\> operator
+
+-   %\>% is a special operator in R found in the magrittr and dplyr packages.
+
+-   %\>% lets you pass objects to functions elegantly,
+
+-   make your code more readable.
+
+```{r}
+# strawars data
+    df1<-starwars |> select(hair_color, skin_color, mass, height)
+    head(df1)
+```
+    
+    
+# Row Manipulation
+
+-   This uses the following verbs **filter, slice, arrange and distinct**
+
+    ```{r}
+    
+    # Filter rows on one condition (e.g., eye color) 
+    df_eye <- starwars %>% 
+    filter(eye_color == "blue")
+
+    # Filter on two OR more conditions 
+    eye.hgt <-starwars %>% 
+    filter(eye_color == "blue" | height > 105)
+    # Filter on two AND more conditions  
+    eye.mass <- starwars %>% 
+    filter(eye_color == "blue"& mass <= 50)
+    # Filter in another set of values  
+    eye.bb <-starwars %>% 
+    filter(eye_color %in% c( "blue", "brown"))
+
+    # Filter rows based on row index  
+    starwars %>% 
+    slice(1:3)
+    ```
+
+# **Sort rows in Order**
+
+```{r}
+#| echo: true
+#| eval: true 
+# Sort rows by values in a column in ascending order 
+df_ord <- starwars %>% 
+arrange(mass)
+
+# Sort rows by values in a column in descending order 
+
+df_ord_dsc <-starwars %>% 
+arrange(desc(mass))
+
+# Remove duplicate rows in all the dataset 
+
+df_distint <-starwars %>% 
+distinct()
+```    
+ 
+# Column Manipulation
+
+-   **select**: select one or more columns with select()
+
+    ```{r}
+    #| echo: true
+    #| eval: true 
+    df2<-starwars |> select(hair_color, eye_color, 
+                    skin_color, mass, height, birth_year)
+
+    # Select columns based on start characters 
+    df_hh <-starwars %>% select(starts_with("h"))
+
+    # Select columns based on end characters 
+    df_color <-starwars %>% select(ends_with("color"))
+
+    # Rename a column using rename() 
+    df_age <- df2 %>% rename(Age.yrs =birth_year)
+
+    ```
+
+# Creating new Columns
+
+```{r}
+#| echo: true
+#| eval: true
+ 
+#create a bmi column : bmi = mass/height
+df_bmi <- df2 %>% mutate(BMI = mass/(height/100)^2)
+
+#Create a skin eye combination 
+df_skin_eye <-df2 %>% transmute(skin_eye_col = paste(skin_color, eye_color))
+
+## add number of observation for a column
+df2 %>% add_count(eye_color)->df22
+
+```
+
+# Aggregating
+
+```{r}
+#| echo: true
+#| eval: true
+# Count groups within a column and return sorted 
+df2 %>% 
+count(eye_color, sort = TRUE)->df2->count
+# Return the total sum, mean, sd, median etc
+df2 %>% 
+  count(eye_color)%>%
+summarise(percent=100*n/sum(n))->df2_sum
+
+```
+
+## Combining data frames
+
+Create Data frames
+
+```{r}
+#| echo: true
+#| eval: true 
+## joining data1 and data 2
+data1 <- data.frame(ID = 1:4,                      # Create first example data frame
+                    X1 = c("a1", "a2", "a3","a4"),
+                    stringsAsFactors = FALSE)
+data2 <- data.frame(ID = 3:6,                      # Create second example data frame
+                    X2 = c("b1", "b2", "b3","b4"),
+                    stringsAsFactors = FALSE)
+
+```
+
+# **Inner Join:**
+
+![](inner_join.png){width="70%"}
+
+```{r}
+#| echo: true
+#| eval: true 
+#apply inner join
+inner_join(data1, data2, by = "ID") 
+```
+
+------------------------------------------------------------------------
+
+# Left Join
+
+![](left_join.png){width="70%"}
+
+```{r}
+#| echo: true
+#| eval: true 
+#apply left join
+left_join(data1, data2, by = "ID")
+```
+
+# **Right Join**
+
+![](right_join-01.png){width="70%"}
+
+```{r}
+#| echo: true
+#| eval: true 
+##Apply right join
+right_join(data1, data2, by = "ID")
+```
+
+# Other Joins
+
+```{r}
+#| echo: true
+#| eval: true 
+##Applying othr join
+full_join(data1, data2, by = "ID")
+anti_join(data1, data2, by = "ID")
+semi_join(data1, data2, by = "ID")
+```
+
+
+# Generating random numbers
+
+-   Generated from physical processes, like ipping coins.
+
+-   Hotbits uses radioactive decay.
+
+-   RANDOM.ORG uses atmospheric noise.
+
+-   Available in R via the random package.
+
+-   True randomness is expensive.
+
+# Visualising random Numbers
+
+```{r}
+#| echo: true
+#| eval: true 
+b1 = rbeta(4500, shape1 = 2, shape2 = 2)
+#check values of b1
+randoms <- data.frame(
+b1)
+#plot the random values
+ggplot(randoms, aes(b1))+geom_histogram(binwidth = 0.1)
+
+```
+
+# Examples
+
+```{r}
+#| echo: true
+#| eval: true
+##Calculating the Z-score of the 95th quantile of the standard normal distribution using the qnorm() 
+qnorm(.95, mean=0, sd=1)
+
+## What is P(X = 1) when X has the Bin(25, 0.005) distribution?
+dbinom(x=1, 25, 0.005)
+
+##Find P(X <= 27) when X is has the Bin(100, 0.25) distribution
+pbinom(27, 100, 0.25)
+```
+
+# Random number seeds
+
+```{r}
+#| echo: true
+#| eval: true 
+set.seed(123)
+rnorm(5)
+data("diamonds")
+head(diamonds)
+
+```
+
+# Simple Random Sampling
+
+```{r}
+#| echo: true
+#| eval: true 
+set.seed(190)
+dia_srs <- diamonds %>% slice_sample(n = 15)
+```
+
+# Systematic Sampling
+
+-uses a systematic way of sampling
+
+```{r}
+#| echo: true
+#| eval: true 
+shuffled <- diamonds%>%
+  slice_sample(prop = 1)
+head(shuffled)
+```
+
+# Stratified sampling
+
+-   Split the population into subgroups
+
+-   Use simple random sampling on every subgroup
+
+```{r}
+#| echo: true
+#| eval: true 
+top_cut <- c("Ideal","Very Good", "Premium")
+dia_top <- diamonds %>%
+      filter(cut %in% top_cut)%>%
+  slice_sample(prop =0.1)
+head(dia_top)
+```
+
+# Proportional Stratified Sampling
+
+-   creating proportional samples by group and count
+
+```{r}
+#| echo: true
+#| eval: true 
+#using propo
+diam_strat <- diamonds%>%
+ group_by(cut)%>%
+  slice_sample(prop =0.1)%>%
+ungroup()
+
+## using count to see distribution
+diam_strat%>%
+ count(cut, sort = TRUE)%>%
+  mutate(percent =100*n/sum(n))
+```
+
+# Equal counts stratified Sampling
+
+-   when equal samples of the starta are required using sample_slice after grouping
+
+```{r}
+#| echo: true
+#| eval: true     
+    #using propo
+    diam_strat_eq <- diamonds%>%
+     group_by(cut)%>%
+      slice_sample(n=6)%>%
+    ungroup()
+
+    ## using count to see distribution
+    diam_strat_eq%>%
+     count(cut, sort = TRUE)%>%
+      mutate(percent =100*n/sum(n))
+```
+
+# Cluster sampling
+
+-   Use simple random sampling to pick some subgroups
+
+-   Use simple random sampling on only those subgroups
+
+```{r}
+#| echo: true
+#| eval: true 
+cut_variety<- unique(
+diamonds$cut
+)
+##stage 1: sampling subgroups
+cut_clus_samp <-sample(cut_variety, size =3)
+
+##stage 2 :sampling each group
+diam_clust<-diamonds %>% filter(cut %in% cut_clus_samp)%>%
+  group_by(cut)%>% slice_sample(n=15)%>%
+  ungroup()
+
+```
+
+# Comparing Sampling
+
+-   Calculate the mean carat size for all the diamonds using all the method
+
+```{r}
+#| echo: true
+#| eval: true 
+    ##population mean size
+    diamonds%>% summarise(mean_size =mean(carat))
+    ##SRS mean
+    dia_srs %>% summarise(mean_size =mean(carat))
+    ##Stratified
+    diam_strat %>% summarise(mean_size =mean(carat))
+
+    ##cluster
+    diam_clust %>% summarise(mean_size =mean(carat))
+```
+
+# Sampling Distributions
+
+-   reproducing samples of size 7 and create a sampling distribution through the mean
+
+```{r}
+#| echo: true
+#| eval: true 
+    mean_carat_point  <- replicate(
+      n=1000,
+      expr = diamonds %>%
+        slice_sample(n=7)%>%
+        summarise(mean_carat_size = mean(carat))%>%
+        pull(mean_carat_size)
+      
+     )
+```

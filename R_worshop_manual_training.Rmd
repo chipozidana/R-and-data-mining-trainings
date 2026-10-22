@@ -1,0 +1,438 @@
+---
+title: "Introductory R Worshop for Statistical data Analysis"
+author: "DR C. ZIDANA"
+#coauthorhost: "Mr E. Kambeu"
+institute: "BIUST: Central Botswana Mathematics and Statistical Sciences Conference (CBMSSC) III, 2024"
+date: "R WORKSHOP 14 March 2024"
+output:
+  beamer_presentation:
+    theme: "Berlin"
+    colortheme: orchid
+    fonttheme: serif
+    keep_tex: yes
+    toc: yes
+    #fig_width: 6cm 
+   #fig_height: 4cm
+  slidy_presentation: default
+---
+
+```{r gnn, echo=FALSE, include=FALSE}
+knitr::opts_chunk$set(fig.width=8, fig.height=4.8) 
+
+```
+
+## **Introduction**
+
+# **What is R?**
+
+-   According to their site [**The R - Project for Statistical Computing**](https://www.r-project.org/):
+
+    > 1.  "R is a language and environment for statistical computing and graphics."
+    > 2.  "R provides a wide variety of statistical (linear and nonlinear modelling, classical statistical tests, time-series analysis, classification, clustering, ...) and graphical techniques, and is highly extensible."
+    > 3.  "One of R's strengths is the ease with which well-designed publication-quality plots can be produced, including mathematical symbols and formulae where needed."
+
+-   R is a programming language.
+
+-   We can write all the latest statistical and graphical programs using R.
+
+-   Can be used for Manuscript writing, preparing slides and reporting using **Rmarkdown/Quarto**
+
+# **Install R its free**
+
+-   Download R from <https://cran.r-project.org>
+
+-   Install RStudio IDE (an R Integrated Development Environment tool)
+
+<http://www.rstudio.com/products/rstudio/download>
+
+------------------------------------------------------------------------
+
+# **R is a function language**
+
+-   All commands in R are regarded as functions.
+
+-   \texttt{plot(x, y)} produces a scatter plot of \texttt{x} vs. \texttt{y}.
+
+-   Help is also a function. To obtain help on the function plot use help(plot). To obtain general help use help(), i.e.use the function help with a null argument.
+
+-   To end a session in R use the function quit().
+
+**R is an object orientated language**
+
+-   All entities in R are objects.
+-   This includes vectors, matrices, data arrays, graphs, functions, and results of an analysis.
+
+------------------------------------------------------------------------
+
+## **Who Uses R?**
+
+1.  Data analysis
+2.  Statistical inference
+3.  Machine learning algorithms/ Deep Learning
+4.  Time series forecasting
+
+**ME,ALL** ![](allprof.jpg){width="538"}**AND YOU**
+
+------------------------------------------------------------------------
+
+# **Why R?**
+
+![](C:/Users/zidanac/OneDrive%20-%20biust.ac.bw/BIUST/STAT305%20STATISTICAL%20METHODS%20AND%20COMPPUTING/R%20stuff/whyRR.png)
+
+------------------------------------------------------------------------
+
+# **Advantages of using R**
+
+-   It’s open-source. No fees or licenses are needed
+
+-   It’s platform-independent. R runs on all operating systems
+
+-   It has lots of packages. For example, the R language has more than 10,000 packages stored in the CRAN repository, and the number is continuously increasing.
+
+-   R shines in Statistical analysis and data science
+
+-   It’s well suited for Machine Learning- predictions, classification , clustering, artificial Neural Networks
+
+-   Good data wrangling- turn unstructured, messy data into a structured format.
+
+-   R is still growing.
+
+------------------------------------------------------------------------
+
+# R platforms
+
+-   R console
+
+-   R studio
+
+-   R markdown
+
+-   Quarto
+
+# R Console
+
+-   The engine of R
+
+-   You can work from the console but YOOOOOOY!!!!!!! NOT The best
+
+# **R-Studio**
+
+![](C:/Users/zidanac/OneDrive%20-%20biust.ac.bw/BIUST/STAT%20303%20Linear%20regression/R%20lectures/rstudioshot.png)
+
+# R Markdown
+
+-   Simple and easy way to use plain text language used to combine your
+
+    1.  R code,
+    2.  results from your data analysis (including plots and tables)
+    3.  Interpretation and written commentary
+    4.  Turn then into a single nicely formatted and reproducible document:
+        -   (like a report, publication, thesis chapter or a web page like this one).
+
+-   R markdown is a variant of another language (yet another language!)
+
+    1.  Can produce Pdf, HTML, Word, Excel. Powerpoint , latex etc
+    2.  <https://r4ds.had.co.nz/r-markdown.html>
+
+# Markdown Process
+
+![](C:/Users/zidanac/OneDrive%20-%20biust.ac.bw/BIUST/STAT305%20STATISTICAL%20METHODS%20AND%20COMPPUTING/R%20stuff/markdown1.png)
+
+# Quarto
+
+-   SAME AS MARKDOWN BUT CAN DO MORE LIKE WEBISTE CREATION
+
+-   ALL IN ONE
+
+-   LANGUAGE WITHIN LANGUAGE
+
+-   REPORT MADE EASIER
+
+# **Getting started**
+
+-   \# is used for commenting
+
+```{r hello}
+# Simply use the print() keyword
+# Write anything between quotation marks to print on console.
+print("Hello World")
+
+##getting help()
+
+??mean
+
+```
+
+# Statistical Analysis/Data Science: Big Question?
+
+-   How should I analyse my data?
+
+    **Answer:** It depends how you gathered them and what you are looking for.
+
+-   What Influences the choices of the analysis?
+
+    1.  The type data you have gathered (Nominal/Ordinal/Interval/Ratio)
+    2.  Is the data paired?
+    3.  Is Data parametric/ non parametric?
+    4.  What are you looking for? correlation or differences, etc.
+
+# Steps in Statistical Analysis
+
+1. Explore your data
+-   Look at data
+-   Identify data type and structures
+-   Graph/Describe the data
+-   Formulate Question (Hypothesis)
+        
+2. Analyse your data
+-   Set up hypothesis
+-   Check out assumptions
+-   Select and run appropriate test
+
+3. Interpret your results
+-   Find the Test Statistic, DF, and P-value
+-    Determine if significant State if null hypothesis rejected or not
+
+4.  Write and Present results
+
+# Data Importation
+
+```{r, message=FALSE}
+library(readr)
+Cardio_Fit<- read_csv("C:/Users/zidanac/OneDrive - biust.ac.bw/ZIDMA/CardioGoodFitness.csv")
+##check data    
+print(head(Cardio_Fit))
+
+```
+
+# Data Types
+
+-   R has six basic types of data;
+
+    1.  **Numeric** data are numbers that contain a decimal
+    2.  **Integers** are whole numbers (those numbers without a decimal point).
+    3.  **Logical** data take on the value of either `TRUE` or `FALSE`.
+        -   Also `NA` to represent missing values.
+    4.  **Character** data are used to represent string values.
+    5.  **Factors-** nominal variable/ ordinal
+    6.  **Complex** (a+bi)- imaginary
+
+-   Data can be Paired or unpaired
+
+    -   Paired: categories are related to one another
+
+    -   Unpaired: categories are not related to one another
+
+# Testing data type in R
+
+```{r, dattype33}
+    num <- 2.2
+    char <- "hello"
+    class(num)  ##tell you dat type of num
+    is.numeric(num) ## check if its numeric or not (return TRU/FALSE)
+    num_char <-  as.character(num) ## Changes num from numeric to character
+```
+
+-------
+
+    | **Type**  | **Logical test** | **Coercing**   |
+    |:----------|:-----------------|:---------------|
+    | Character | `is.character`   | `as.character` |
+    | Numeric   | `is.numeric`     | `as.numeric`   |
+    | Logical   | `is.logical`     | `as.logical`   |
+    | Factor    | `is.factor`      | `as.factor`    |
+    | Complex   | `is.complex`     | `as.complex`   |
+
+# Data Structures
+
+-   Scalars and vectors
+
+-   Matrices and arrays
+
+-   List
+
+-   Data frames
+
+# Scalars and Vectors
+
+-   simlest data structure is a vector
+
+-   Vectors with single value are called scalars
+
+-   Vectors can contain numbers, factors, strings or logical of the **same type**
+
+```{r scalar_vector}
+##creating a numeric vector
+y<- c(3, 5, 6, 7, 8, 9,20)
+##creating a character vector
+f1<- c("jacob","Munya","Grace","Claris","Chipo")
+```
+
+# **Vector Operations**
+
+-   mean
+
+```{r}
+length(y)
+mean(y)
+```
+
+-   median
+
+```{r}
+median(y)
+```
+
+-   min
+
+```{r}
+min(y)
+
+```
+
+# **Random Sampling**
+
+```{r rsamp}
+x1=sample(1:1000, 100)
+x1
+
+```
+
+# Matrices and arrays
+
+-   a vector that has additional attributes called dimensions
+
+-   Arrays are just multidimensional matrices
+
+-   matrices and arrays must contain elements all of the same data class.
+
+```{r matrix_array}
+    my_mat <- matrix(1:16, nrow = 4, byrow = TRUE)
+    my_mat
+```
+
+# Arraya
+
+```{r, raaray}
+    my_array <- array(1:16, dim = c(2, 4, 2))
+    my_array
+```
+
+# Matrix Operations
+
+-   R has numerous inbuilt function to perform operations
+
+```{r matrx_opp}
+t(my_mat) ## Transposesmy_mat matrice
+mat.1 <- matrix(c(2, 0, 1, 1), nrow = 2)
+mat.2 <- matrix(c(1, 1, 0, 2), nrow = 2)
+mat.1+mat.2 ##add the mtrices
+mat.1 * mat.2           # element by element products
+mat.1 %*% mat.2         # matrix multiplication
+```
+
+    # Lists
+
+-   lists are able to store mixtures of data types.
+
+```{r}
+list_1 <- list(c("black", "yellow", "orange"),
+                   c(TRUE, TRUE, FALSE, TRUE, FALSE, FALSE),
+                 matrix(1:6, nrow = 3))
+```
+
+# Data Frames
+
+-   commonly used data structure to store data in is the data frame
+
+-   two-dimensional object made up of rows and columns which looks superficially very similar to a matrix
+
+-   contain a mixture of different types of data.
+
+-   each row corresponds to an individual observation and each column corresponds to a different measured or recorded variable
+
+# Creating Data Frames
+
+
+```{r dataf}
+    Name <- c('Jim','Jack','Joe','Mary','Jean', 'tanny','Spiwe')
+    sex <- c('M', 'M', 'M', 'F', 'F','M','F')
+    city<-c('Gabs','Ftwon','Pye','Gabs','Ftwon','Pye','Pye')
+    Income <- c(85,90,75,100,70,NA,97)
+    Age<-c(25,30,45,43,55,67,23)
+    dataf <- data.frame(Name,sex,city,Income,Age)
+    dataf
+```
+
+# Data Frame Operations
+
+-   checking structure and data types
+
+    ```{r}
+    dim(dataf)   # 7 rows and 5 columns
+    str(dataf)   #lets us data structure and type together with dimensions
+    ```
+
+# Resources
+
+**Install R**
+
+
+<https://cran.r-project.org/bin/windows/base/>
+
+![](C:/Users/zidanac/OneDrive - biust.ac.bw/BIUST/STAT305 STATISTICAL METHODS AND COMPPUTING/rproject.png)
+
+
+--------------------
+
+**Install R-Studio**
+
+<https://www.rstudio.com/>
+
+![](C:/Users/zidanac/OneDrive - biust.ac.bw/BIUST/STAT 303 Linear regression/R lectures/rstudio.png)
+
+----------------------
+
+
+**Learn R**
+
+<https://www.datacamp.com/>
+
+![](C:/Users/zidanac/OneDrive - biust.ac.bw/BIUST/STAT305 STATISTICAL METHODS AND COMPPUTING/R stuff/datacamp.png)
+
+------------------
+
+
+**Learn R**
+
+<http://swirlstats.com/>
+
+![](C:/Users/zidanac/OneDrive - biust.ac.bw/BIUST/STAT 303 Linear regression/R lectures/swirl.png)
+
+
+--------------------------
+
+**Learn R**
+
+<http://tryr.codeschool.com/>
+
+![](C:/Users/zidanac/OneDrive - biust.ac.bw/BIUST/STAT 303 Linear regression/R lectures/tryr.png)
+
+-----------------------
+
+**Obsess about R**
+
+<http://www.r-bloggers.com/>
+
+![](C:/Users/zidanac/OneDrive - biust.ac.bw/BIUST/STAT 303 Linear regression/R lectures/blogger.png)
+
+------------------------
+
+**Ask questions about R**
+
+<https://stat.ethz.ch/mailman/listinfo/r-help>
+
+![](C:/Users/zidanac/OneDrive - biust.ac.bw/BIUST/STAT 303 Linear regression/R lectures/rhelp.png)
+
+----------------------------
+

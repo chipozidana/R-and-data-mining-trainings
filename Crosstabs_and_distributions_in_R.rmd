@@ -1,0 +1,243 @@
+---
+title: "Cross Tabulation in R"
+author: "DR C. ZIDANA"
+date: "STAT 305"
+output:
+  beamer_presentation:
+    theme: "CambridgeUS"
+    colortheme: whale
+    fonttheme: serif
+    keep_tex: yes
+    toc: yes
+    fig_caption: no
+  slidy_presentation: default
+---
+
+**Packages Needed**
+
+```{r data}
+library(haven)
+library(tidyr)
+
+chisq1 = read_sav("chisqre_dat.sav") 
+chisq1$Gender = factor(chisq1$Gender)
+chisq1$Athlete = factor(chisq1$Athlete)
+chisq1$Smoking = factor(chisq1$Smoking)
+chisq1$Gender = factor(chisq1$Gender)
+chisq1$State = factor(chisq1$State)
+chisq1$LiveOnCampus =factor(chisq1$LiveOnCampus)
+chisq1$HowCommute = factor(chisq1$HowCommute)
+chisq1$CommuteTime =factor(chisq1$enrolldate)
+chisq1$expgradate = factor(chisq1$expgradate)
+chisq1$Major =factor(chisq1$Major)
+
+chisq1
+
+```
+
+--------------------
+
+##Frequency count
+
+```{r ccross, warning=FALSE, fig.height=3.05, fig.width=6}
+library(gmodels)
+p3 = CrossTable(chisq1$Gender, chisq1$Smoking, chisq = T, prop.r = T, prop.c = F, prop.t = F, prop.chisq = F, format = "SPSS")
+# library(kableExtra)
+# knitr::kable(p3, format = "latex") %>%
+#   kableExtra::kable_styling(font_size = 7) 
+
+```
+
+------------------------------
+
+**Contigent table and R**
+
+
+```{r ciintt}
+##data fram3
+df = data.frame(
+  "Name" = c("Amiya", "Rosy", "Asish"),
+  "Gender" = c("Male", "Female", "Male")
+)
+ 
+# Creating contingency table from data using table()
+conTable = table(df)
+print(conTable)
+
+```
+----------------------
+
+**Chi square from Contigent Table**
+
+```{r cintigent2}
+ data("mtcars")
+table(mtcars$carb, mtcars$cyl) 
+## chi sqaure
+chisq.test(mtcars$carb, mtcars$cyl)
+
+```
+
+----------------
+
+**Built in Distribution in R**
+
+- Common standard distributions have been built into R , and it can
+completely replace traditional statistical tables.
+
+- Four fundamental items can be calculated for a statistical distribution:
+1. Density or point probability
+2. Cumulated probability, distribution function
+3. Quantiles
+4. Pseudo-random numbers
+
+- For all distributions implemented in R , there is a function for each of the four items listed above.
+
+- For example, for the normal distribution,these are named *dnorm , pnorm , qnorm , and rnorm*
+
+- represent (density,
+probability, quantile, and random, respectively).
+
+
+--------------------------------
+
+**Continuous Distribution - Normal Densities**
+
+```{r cnnt,fig.height=3.05, fig.width=6 }
+
+x<- seq(-6, 6, 0.1)
+plot(x, dnorm(x), type ="l")
+
+```
+
+------------------------------
+
+**Normal (Gaussian) – Random sampling**
+
+```{r random sampling1}
+
+rnorm(7)
+rnorm(7, mean =4, sd =0.3)
+rpois(10, lambda = 2)
+
+```
+
+----------------------------------
+
+**Cumulative probability**
+
+-Cdf describes the probability of “hitting” x or less in a given distribution.
+- IF $N(142, 10)$. Then,if one has a value of 160:
+```{r }
+1-pnorm(160,mean=142,sd=10)
+
+```
+
+- Meaning: 3.5\% of the general population, that has that value or higher.
+- pnorm returns the probability of getting a value smaller than its first argument in a normal distribution with the given mean and standard deviation.
+
+--------------------------------
+
+**PLOTTING NORMAL DISTRIBUTION**
+
+```{r PLOTTNG, fig.height=3.05, fig.width=6}
+par(mfrow=c(1,2))
+plot(x,dnorm(x),type="l",main="dnorm")
+plot(x,pnorm(x),type="l",main="pnorm")
+
+```
+
+---------------
+
+**Assessment- Binomial distribution**
+
+```{r }
+y=1: 35
+
+```
+
+**Challenge**: Plot the Binomial density and
+cumulative distributions for y (n=35, p=0.33)
+
+------------------
+
+**ANSWER**
+
+```{r , warning=FALSE, fig.height=3.05, fig.width=6}
+
+par(mfrow=c(1,2))
+plot(y,dbinom(y, 35, 0.33),type="h")
+plot(y,pbinom(y, 35, 0.33),type="h")
+
+```
+
+-----------------
+
+**qqnorm: Is the data normally distributed**
+
+```{r , warning=FALSE, fig.height=3.05, fig.width=6}
+
+par(mfrow=c(1,2))
+x1 <- rnorm(50)
+y1=seq(-4,4,0.1)
+qqnorm(x1)
+abline(0,1)
+qqnorm(y1)
+abline(0,1)
+
+```
+
+-----------------
+
+**QQPlots: Are the datasets sampled from the same distribution?**
+
+```{r, warning=FALSE, fig.height=3.05, fig.width=6}
+par(mfrow=c(1,2))
+x <- rnorm(50)
+y=seq(-4,4,0.1)
+z=rnorm(100)
+qqplot(x,y)
+abline(0,1)
+qqplot(x,z)
+abline(0,1)
+
+```
+------------------
+
+**Creating Functions in R**
+
+
+function_name <- function(arg_1, arg_2, ...) {
+   Function body 
+}
+
+----------------------
+
+**Evaluating Functions in R**
+
+```{r ffunction}
+f1=function(x){
+  sin (x^2)*cos(sqrt(x^4+3)-x^2)-x +1
+  }
+x=seq(-3, 3, by = 0.1)
+y1= f1(x)
+plot(x,y1)
+```
+
+-----------------
+
+<!-- ```{r} -->
+<!-- library(shiny) -->
+
+<!-- ui <- fluidPage( -->
+<!--   textInput("name", "What's your name?"), -->
+<!--   passwordInput("password", "What's your password?"), -->
+<!--   textAreaInput("story", "Tell me about yourself", rows = 3) -->
+<!-- ) -->
+<!-- server <- function(input, output, session) { -->
+<!-- } -->
+<!-- shinyApp(ui, server) -->
+
+<!-- ```  -->
+  
+  
+--------------------------------------

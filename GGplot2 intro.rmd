@@ -1,0 +1,297 @@
+---
+title: "GGplot for Graphics"
+author: "DR C. ZIDANA"
+date: "BIUST"
+output:
+  beamer_presentation:
+    colortheme: seagull
+    fonttheme: serif
+    keep_tex: yes
+    toc: yes
+    fig_caption: no
+  slidy_presentation: default
+---
+
+# **Visualising graphs with ggplot2 package**
+
+*The simple graph has brought more information to the data analyst’s mind than any other device." --- John Tukey*
+
+1. **GGPLOT**- A Grammar of Graphics!
+
+2. The Language
+
+**ggplot**(data = <DATA>) + \\
+**GEOM_FUNCTION**(mapping = aes(<MAPPINGS>),\\
+     stat = <STAT>, 
+     position = <POSITION>
+  ) +
+**COORDINATE_FUNCTION**+
+  **FACET_FUNCTION**
+
+  
+# Why use ggplot2?
+
+
+- Automatic legends, colors, etc.
+- Easy superposition, facetting, etc.
+- Nice rendering (though I don't like the default grey theme).
+
+- Store any ggplot2 object for modification or future recall. Super useful for packages.
+
+- Lots of users (less bugs, more help on Stack Overflow).
+
+- Lots of extensions.
+
+- Nice saving option.
+
+# Tidy Data
+
+
+<center>[CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/)</center>
+
+```{r setup, message=FALSE}
+library(tidyverse)
+```
+
+```{r}
+head(mpg)
+```
+
+# Aesthetics
+
+- Color
+- Size
+- Line type
+- Opacity
+- Shape
+
+# Map data cell values to aesthetics
+
+.center[`aes(color = class)`]
+
+Visual Space | &nbsp; | Data Space
+---|---|---
+`color` | &nbsp; | `mpg$class`
+.red[Red] | $\Leftrightarrow$ | 2 seater
+.blue[Blue] | $\Leftrightarrow$ | pickup
+... | $\Leftrightarrow$ | ...
+.green[Green] | $\Leftrightarrow$ | midsize
+
+-------------
+
+# **A few common geoms**
+
+Type | Geom
+---|---
+Bar graph | `geom_bar()  geom_col()`
+Histogram | `geom_hist`
+Scatter plot | `geom_point()`
+Line graph | `geom_line()`
+Box plot | `geom_boxplot()`
+Density | `geom_density()  geom_violin()`
+Heat map | `geom_heatmap()`
+Mapping | `geom_sf()`
+Regression line | `geom_smooth()`
+
+(https://ggplot2.tidyverse.org/reference/index.html#section-layer-geoms)]
+
+# Your Turn 1
+
+Run the code on the slide to make a graph. Pay strict attention to spelling, capitalization, and parentheses!
+
+```{r, fig.dim=c(6,4)}
+ggplot(data = mpg) +geom_point(mapping = aes(x = displ, y = hwy))
+```
+
+#  MAPPINGS
+
+```{r echo=FALSE, fig.height=5, fig.width=9}
+mpg %>% 
+  ggplot(aes(displ, hwy)) +
+  geom_point() +
+  stat_ellipse(data = . %>% filter(class == "2seater"), geom = "polygon", alpha = 0.3)
+```
+#Maping 2
+
+
+```{r echo=FALSE, fig.width=9}
+mpg %>% 
+  ggplot(aes(displ, hwy)) +
+  geom_point(aes(color = class)) +
+  stat_ellipse(data = . %>% filter(class == "2seater"))
+```
+
+
+# Your Turn 2
+
+Add `color`, `size`, `alpha`, and `shape` aesthetics to your graph. Experiment.  
+
+```{r, fig.dim=c(6,4), warning=FALSE}
+hh1= mpg %>% ggplot() +
+  geom_point(mapping = aes(x = displ, y = hwy,
+                           color = class,
+                           size = cyl,
+                           shape = drv,
+                           alpha = hwy))
+```
+--------------------
+
+```{r plop1}
+hh1
+```
+
+
+
+# Boxplot: Your Turn 3
+
+Replace this scatterplot with one that draws boxplots. Use the cheatsheet. Try your best guess.
+
+```{r, fig.dim=c(6,4)}
+mpg %>% ggplot() + 
+  geom_point(aes(class, hwy))
+```
+
+
+--------------------
+
+
+```{r , fig.dim=c(6,4)}
+mpg %>% ggplot() + 
+  geom_boxplot(aes(class, hwy))
+```
+
+# Histogram: Your turn 4
+
+Make a histogram of the `hwy` variable from `mpg`.
+
+```{r}
+h1 = mpg %>%   ggplot() +
+  geom_histogram(aes(hwy))
+```
+
+--------------
+
+
+```{r plop, warning=FALSE}
+h1
+
+```
+
+
+
+-------------
+
+```{r}
+mpg %>% ggplot() +
+  geom_histogram(aes(hwy), binwidth = 2)
+```
+
+
+# DENSITY PLOT:Your Turn 5
+
+Make a density plot of `hwy` colored by `class`.
+
+```{r, fig.dim=c(5,4) }
+d1 = mpg %>% ggplot() +
+    geom_density(mapping = aes(x = hwy, color = class))
+
+```
+----------------------
+
+```{r plop1d1}
+d1
+```
+
+
+# Your Turn 6
+
+Make a bar chart `hwy` colored by `class`.
+
+```{r, fig.dim=c(5,4)}
+mpg %>% ggplot() +
+  geom_bar(mapping = aes(x = class, color = class))
+```
+
+--------------
+
+```{r, fig.dim=c(5,4)}
+mpg %>%ggplot() +
+  geom_bar(mapping = aes(x = class, fill = class))
+```
+
+# Your Turn 7
+
+Predict what this code will do. Then run it.
+
+```{r, fig.dim=c(5,4)}
+p7= mpg %>% ggplot() + 
+  geom_point(aes(displ, hwy)) +
+  geom_smooth(aes(displ, hwy))
+```
+
+----------------
+
+
+```{r plop17t}
+p7
+
+```
+
+
+
+
+# Global v local
+
+
+```{r, fig.height=5, fig.width=9}
+library(babynames)
+
+p1= babynames %>% 
+  filter(name == "John" & sex == "M" | 
+           name == "Elizabeth" & sex == "F") %>% 
+  ggplot(aes(year, prop)) +
+  geom_line(aes(color = sex)) +
+  geom_point(alpha = 0.4, shape = "cross") +
+  geom_text(data = . %>% filter(year == 1965), aes(label = name),
+            nudge_y = .009) +
+  labs(title = "Name Popularity") + 
+  theme(legend.position = "none")  
+
+```
+
+-----------------
+
+```{r plop1t}
+p1
+```
+
+
+# Facet wrap
+
+
+```{r echo=TRUE, fig.height=5, fig.width=9}
+p2= mpg %>% 
+  ggplot(aes(displ, hwy)) +
+  geom_point() +
+  facet_wrap(~ class)  #<<
+```
+
+-------------------
+
+
+```{r plop1t2}
+p2
+```
+
+
+# Labels
+
+```{r fig.height=5, fig.width=9}
+mpg %>% 
+  ggplot(aes(displ, hwy)) +
+  geom_point() +
+  labs(title = "Automobile mileage",               #<<
+       x = "Displacement", y = "Highway mpg",      #<<
+       caption = "Source:  ggplot2::mpg")          #<<
+```
+

@@ -1,0 +1,661 @@
+---
+title: '**Fundamental Concepts**'
+author: "Prepared by Dr C. Zidana"
+date: "BIUST-STAT 612"
+output:
+  beamer_presentation:
+    theme: AnnArbor
+    colortheme: dolphin
+    fonttheme: serif
+    keep_tex: yes
+    slide_level: 2
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(readr)
+
+```
+
+# Review of Fundamental Concepts 
+
+## **Introduction**
+
+- $\mu$ and $\sigma^2$ important role in the study of statistical distributions because they summarise **central location** and the **spread**.
+
+- Similarly, In time series these **second-order properties** like **mean**, **variance**, and **correlation** behaviour over time is important
+
+- Thus we need to understand them to get right time series models. Suppose $Y_t$ is time series variable,Then it denote the response variable as  Y change with time t. ie at$t=9,\;Y =Y_9$
+
+**Mean of $Y_t$**
+$\mu_t$:is the mean of all possible realizations of $Y_t$ 
+
+**Variance of $Y_t$**
+$\sigma^2_t$:is the variance of all possible realizations of $Y_t$ 
+
+------------------
+
+## **Time series/Stochastic Processes**
+
+- A **stochastic process** is a collection of random variables that are
+ordered in time. 
+
+- We write $Y(t)$ if time is continuous ($-\infty < t <
+\infty$) and $Y_t$ if time is discrete $t=0, \pm 1, \pm 2, \ldots$. 
+
+- At this time we will only consider stochastic processes indexed by
+discrete time and write $\{Y_t : t = 0, \pm 1, \pm 2, \ldots \}$ to
+represent $\{\ldots, Y_{-1}, Y_0, Y_1,\ldots\}$.
+
+- The finite set of observations $\{Y_1, \ldots, Y_n\}$ that we usually have will be considered to be a random sample from  $\{Y_t : t = 0, \pm 1, \pm 2, \ldots \}$.
+
+----------------
+
+## **Mean Estimations**
+
+$\displaystyle\mu_t =  \frac{1}{n}\sum_{i=1}^n Y_{t_n}$
+
+A. **Expectation**
+
+- The expected value, commonly abbreviated to expectation, E, of a variable,
+or a function of a variable, is its mean value in a population
+
+- Assume $X$ is a continuous random variable with a pdf $f(x)$. The
+**expected value** of $X$ is defined as
+\[ E(X) = \int_{-\infty}^\infty x f(x) dx \]
+if $\int_{-\infty}^\infty |x|f(x) dx \ <  \ \infty$. Otherwise, $E(X)$
+is undefined. We sometimes write $\mu_X = E(X)$.
+
+------------------
+
+## **Properties**
+
+\begin{enumerate}
+ \item If $h(x)$ is a function such that $\int_{-\infty}^\infty |h(x)|
+f(x) dx < \infty$, then $E(h(X)) = \int_{-\infty}^\infty h(x)
+f(x) dx$.
+
+\item If $X$ and $Y$ have a joint pdf $f(x,y)$ and $\int_\infty^\infty
+\int_\infty^\infty |h(x,y)|f(x,y) dx dy < \infty $, then
+\[ E(h(X,Y)) = \int_\infty^\infty \int_\infty^\infty h(x,y) f(x,y) dx
+dy \;.\]
+
+\item For $a,b,c$ real, we have
+\[ E(aX + bY + c) = aE(X) + bE(Y) + c\;.\]
+\end{enumerate}
+
+------------------
+
+## **Variance**
+
+The **variance** of $X$ is defined as 
+\[ V(X) = E\left(\{X - \mu_X\}^2\right) \]
+provided $E(X)$ and $E(X^2)$ are defined. 
+
+**Properties**
+\begin{enumerate}
+ \item $V(X) \geq 0$
+ \item $V(aX + b) = a^2V(X)$
+ \item If $X$ and $Y$ are independent (i.e $f(x,y) = f(x)g(y)$, where
+$f$ and $g$ are the pdfs of $X$ and $y$, resp.), then
+\[ V(X+Y) = V(X) + V(Y) \]
+\item $V(X) = E(X^2) - \mu_X^2$
+\end{enumerate}
+
+The standard deviation of $X$ is $\sigma_X = +\sqrt{V(X)}$. We
+sometimes write $\sigma_X^2 = V(X)$.
+
+-----------
+
+## **Covariance**
+
+The **covariance** of $X$ and $Y$ is defined as
+\[ Cov(X,Y) = E[(X - \mu_X)(Y - \mu_y)] \]
+provided $E(X)$, $E(Y)$, and $E(XY)$ are all defined.
+
+**Properties**
+\begin{enumerate}
+ \item If $X$ and $Y$ are independent, then $Cov(X,Y) = 0$.
+ \item $Cov(aX + b \ , \ cX + d) = acCov(X,Y)$
+ \item $Cov(X,Y) = E(XY) - E(X)E(Y)$
+ \item $V(X+Y) = V(X) + V(Y) + 2 Cov(X,Y)$
+ \item $Cov(X+Y \ , \ Z) = Cov(X,Z) + Cov(Y,Z)$
+ \item $Cov(X,X) = V(X)$
+ \item $Cov(X,Y) = Cov(Y,X)$
+\end{enumerate}
+
+------------------------
+
+## **Correlation**
+
+-  is a dimensionless measure of the linear association between
+a pair of variables $(x, y)$ and is obtained by standardising the covariance by
+dividing it by the product of the standard deviations of the variables.
+
+- The **correlation coefficient** of $X$ and $Y$ is defined as
+\[ Corr(X,Y) = \frac{Cov(X,Y)}{\sigma_X \sigma_Y}=\frac{E(X-\mu_x)E(Y-\mu_y)}{\sigma_X \sigma_Y} \]
+provided that the variances and covariances exist and $\sigma_X >0$
+and $\sigma_Y > 0$. We sometimes write $\rho = Corr(X,Y)$.
+
+**Sample Correlation**
+
+$$Cor(X,Y)= \frac{Cov(X,Y)}{sd(X)sd(Y)}$$
+
+-----------------
+
+## **Properties**
+\begin{enumerate}
+ \item $|Corr(X,Y)| \leq 1$
+ \item $Corr(aX + b \ , \ cY + d) = sgn(ac) Corr(X,Y)$ where
+ \begin{eqnarray*}
+ [ sgn(s) = \begin{cases}
+              1 & \mbox{if } s > 0\\
+	      0 & \mbox{if } s=0 \\
+	      -1 & \mbox{if } s<0
+             \end{cases}
+\end{eqnarray*}
+\end{enumerate}
+
+3. $|Corr(X,Y)| = 1$ iff there are constants $a$ and $b$ such that
+$P(Y = aX + b) = 1$
+
+
+
+----------------------------
+
+## **AUTO- CORRELATION**
+
+- **Autocovariance**: $|gamma_k= E(Y_t-\mu)(Y_{t-1}-\mu$
+
+- **autocorrelation or serial correlation**- aA correlation of a variable with itself at different times 
+
+- Autocorrelation function (acf ) at lag k, $\rho_k$, is defined by
+
+
+$$\displaystyle \rho_k =\frac{E(Y_t-\mu)(Y_{t-1}-\mu)}{\sigma^2}= \frac{\gamma_k}{\sigma^2}$$
+
+- These can be estimated from sample equivalence $\displaystyle r_k=\frac{c_k}{c_0}$
+
+----------------------------
+
+
+## **Examples**
+
+ Suppose $X$ and $Y$ are random variables with $\mu_X = 0, \sigma_X =
+1, \mu_Y = 10, \sigma_Y = 3, \rho = 1/2$. Then 
+\begin{enumerate}
+ \item $E(2X+Y) = 2E(X) + E(Y) = 2(0) + 10 = 10$
+ \item Using the properties of the covariance and definition of $\rho$
+ \begin{align*}
+        V(X-Y) &= V(X) + V(-Y) + 2 Cov(X,-Y)\\
+	&= V(X) + (-1)^2 V(Y) -2 Cov(X,Y) \\
+	&= V(X) + V(Y) - 2 \rho \sigma_X \sigma_Y \\
+	&= 1 + 9 - 2(1/2)(1)(3) \ = \ 7
+       \end{align*}
+\item Using the properties of the covariance
+\begin{align*}
+ Cov(X-Y , Y) &= Cov(X,Y) + Cov(-Y,Y) \\
+ &= Cov(X,Y) - Cov(Y,Y) \\
+ &= Cov(X,Y) - V(Y) \\
+ &= (1/2)(1)(3) - 9 \ = \ -\frac{15}{2}
+\end{align*}
+
+\end{enumerate}
+
+-------------------------
+
+## **Correlogram**
+
+- the acf function produces a plot of $r_k$ against k, which is called the correlogram.
+
+- The x-axis gives the lag (k) and the y-axis gives the autocorrelation ($r_k$) at each lag.
+
+- If $\rho_k = 0$, the sampling distribution of $r_k$ is approximately normal, with a mean of $-1/n$ and a variance of $1/n$. 
+
+- The dotted lines on the correlogram
+
+$$\frac{-1}{n}\pm \frac{2}{\sqrt{n}}$$
+
+- At lag zero $r_k$ is always equal to 1
+
+-------------------
+
+
+## **In R**
+
+```{r acfv, cache=F, message=FALSE, fig.height=5.5}
+unempl <- read_csv("bw_youth_unempl.csv")
+acf(unempl$percent)
+```
+
+
+-----------------------
+
+## **Backshift operator**
+
+The backward shift operator B is defined by
+$$BY_t = Y_{t-1}$$ R1
+The backward shift operator is sometimes called the ‘lag operator’. By repeatedly applying B, it follows that
+$$B^nY_t = Y_{t-n} $$
+- Using$B$ Then the random walk $Y_t =Y_{t-1}+e_t$ can be written as
+$$Y_t = BY_t +e_t \implies (1-B)Y_t =e_t \implies Y_t = (1-B)^{-1}e_t $$
+considering B as a number this can be written as geometric series such that
+$$Y_t = (1+B+B^2+.....)e_t = \Phi(B)e_t = e_t+e_{t-1}+e_{t-2}+....$$
+
+--------------
+
+- **NB** $\Phi(B)=0$ is called the characteristic equation of any series. The roots of the polynomial determines stationarity:
+
+a. If all roots are greater than unity in absolute value implies stationary
+b. Random walk has roots $B=1$ is non stationary
+
+**Difference Operator**
+
+- Differencing adjacent terms of a series can transform a non-stationary series
+to a stationary series. *EG* if $Y_t$ is a random walk it is non stationary but firt differencing R1 makes it stationary $e_t = Y_t - Y_{t-1}$. 
+- thus differencing is useful filtering procdure
+$$\nabla x_t = x_t-x_{t-1}= (1-B)x_t$$
+- in general therefore (Proof exercise)
+ $$\nabla^n = (1-B)^n$$
+
+---------------------------
+
+## **Expectations of Stochastic Processes**
+
+Consider the stochastic process $\{Y_t : t = 0, \pm 1, \pm 2,
+\ldots \}$.
+
+The **mean function** is the expected value of the process at
+time $t$ defined by
+\[ \mu_t = E(Y_t)\;, \quad t = 0, \pm 1, \pm 2, \ldots \]
+
+
+The **autocovariance function (ACVF)** is defined as
+\[ \gamma_{t,s} = Cov(Y_t, Y_s) = E(Y_tY_s) - \mu_t\mu_s \;, \quad s,t =
+0, \pm 1, \pm 2, \ldots \]
+
+The **autocorrelation function (ACF)** is defined by
+\[ \rho_{t,s} = Corr(Y_t, Y_s) =
+\frac{\gamma_{t,s}}{\sqrt{\gamma_{t,t}\gamma_{s,s}}} \;, \quad s,t =
+0, \pm 1, \pm 2, \ldots \]
+
+
+--------------------
+
+## **Properties**
+
+\begin{enumerate}
+\item $\gamma_{t,t} = V(Y_t)$\;, \quad \quad $\rho_{t,t} = 1$
+\item $|\gamma_{t,s}| \leq \sqrt{\gamma_{t,t}\gamma_{s,s}}$\;, \quad
+\quad $|\rho_{t,s}| \leq 1$
+\item If $a_1, \ldots, a_n$ and $b_1, \ldots, b_m$ are constants and
+$t_1, \ldots, t_n$ and $s_1, \ldots, s_m$ are time points, then \[Cov\left\{\sum_{i=1}^n a_i Y_{t_i} \ , \ \sum_{j=1}^m b_j Y_{s_j}
+\right\} = \sum_{i=1}^n \sum_{j=1}^m a_i b_j \gamma_{t_i,s_j}\]
+\end{enumerate}
+
+---------------------------
+
+# **Examples of Stochastic Processes**
+
+## **White Noise $\{e_t\}$**
+
+- iid random variables with a normal distribution with constant mean and variance.
+
+$$\gamma_k = Cov(e_t, e_{t+k})=\begin{cases}
+V(e_t) & \quad \mbox{ if } t = k \\
+0 & \quad \mbox{ if } t \ne k 
+                  \end{cases} $$
+- No correlation over time
+$$\rho_k = \begin{cases}
+1& \quad \mbox{ if } k = 0 \\
+0 & \quad \mbox{ if } k \ne 0 
+                  \end{cases}$$
+
+- Note that we used a white noise process with mean function $\mu_t = 0$
+and variance $V(e_t) = \sigma^2_e$ to construct our random walk
+process.
+
+-------------
+
+### **White Noise Examples**
+
+```{r WN, echo=FALSE, fig.cap="", out.width = '80%'}
+knitr::include_graphics("C:/Users/zidanac/Documents/STAT411_Time_Series/STAT411_time series/STAT411/WN_pic.jpg")
+```
+
+------------
+
+### **White Noise Simulation**
+
+```{r wn sim,fig.height=5.5 }
+ WN_1 <- arima.sim(model = list(order = c(0, 0, 0)), n = 80) 
+plot(WN_1)
+```
+
+-----
+
+### **Simulate from the WN model with $mean = 4,\; sd = 2 $**
+
+```{r wn2, fig.height=5.5}
+WN_2 <- arima.sim(model = list(order = c(0, 0, 0)),n = 80,mean = 6,sd = 3)
+ts.plot(WN_2)
+```
+
+
+            
+
+------
+
+### **Correlogram**
+
+```{r acf white, fig.height=5.5}
+par(mfrow=c(1,2))
+acf(WN_1)
+acf(WN_2)
+```
+
+
+-------------------------
+
+## **The Random Walk**
+
+- No specified mean and variance
+
+- Strong dependence on time
+
+- Its changes over time are white noise (WN)
+
+- Let \[e_1, e_2, \ldots \] be i.i.d
+random variables with mean $0$ and variance $\sigma^2_e$.
+
+- Now construct a time series $\{Y_t\}$ as 
+\vspace{-.35in}
+\begin{align*}
+Y_1 &= e_1 \\
+Y_2 &= e_1 + e_2 \\
+& \vdots \\
+Y_t & = e_1 + e_2 + \cdots + e_t \\
+& \vdots
+\end{align*}
+\vspace{-.35in}
+
+- $Y_t = Y_{t-1} + e_t$, where $Y_0 = 0$ with probability $1$.
+- $e_t$ is the step size at time $t$ by a *random walker*. 
+- $Y_t$ is the position of the random walker at time $t$ whose initial position is the origin. 
+
+-------
+
+### **Random Walk Examples**
+
+```{r RW1, echo=FALSE, fig.cap="", out.width = '100%'}
+knitr::include_graphics("C:/Users/zidanac/Documents/STAT411_Time_Series/STAT411_time series/STAT411/RW1.jpg")
+```
+- $Y_t-Y_{t-1} = diff(Y)$ iid White Noise
+
+-------------
+
+### **Random Walk Expectations**
+
+**Mean**
+$$\mu_t = E(Y_t) = E(e_1 + \cdots + e_t) = E(e_1) + \cdots + E(e_t) =
+0 \;.$$
+
+**variance**
+$$V(Y_t) = V(e_1 + \cdots + e_t) = V(e_1) + \cdots + V(e_t) = t \sigma^2_e$$
+**ACVF for $1 \leq t \leq s$**
+\begin{align*}
+\gamma_{t,s} &= Cov(Y_t, Y_s) = Cov\left\{\sum_{i=1}^t e_i \ , \ \sum_{j=1}^s e_j\right\}  = \sum_{i=1}^t\sum_{j=1}^s \gamma_{i,j} \\
+& = \sum_{i=1}^t \gamma_{i,i}  + \underset{i \ne j}{\sum_{i=1}^t
+\sum_{j=1}^s} \gamma_{i,j} = t \sigma^2_e
+\end{align*}
+**ACF**, $1 \leq t \leq s$
+\[ \displaystyle \rho_{t,s} = \frac{\gamma_{t,s}}{\sqrt{\gamma_{t,t}\gamma_{s,s}}} =
+\frac{t \sigma^2_e}{\sqrt{t \sigma^2_es \sigma^2_e}} =
+\sqrt{\frac{t}{s}} \;.\]
+
+---------------
+
+<!-- ### **Random Walk Example 2** -->
+
+<!-- Consider a very simple sequence of independent random variables \[e_1, -->
+<!-- e_2, \ldots \] each taking the values $+1$ and $-1$ with probability -->
+<!-- $1/2$, i.e -->
+<!-- \[ P(e_i = +1) = P(e_i = -1) = 1/2\;, \quad \quad i = 1, 2, \ldots \] -->
+<!-- The mean and variance of $e_i$ are  -->
+<!-- \[ E(e_i) = (1)(.5) + (-1)(.5) = 0 \quad \mbox{and} \] -->
+<!-- \[ V(e_i) = E(e_i^2) = (1^2)(.5) + (-1^2)(.5) = 1\;.\] -->
+<!-- Thus the random walk $\{Y_t\}$ given by $Y_t = Y_{t-1} + e_t$ for $t -->
+<!-- \geq 1$ (with $P(Y_0 = 0)=1$) has $\mu_t = 0$, and -->
+<!-- $\gamma_{t,s} = t$ for $s \geq t$. -->
+
+<!-- --------------- -->
+
+### **Random Walk Simulation**
+
+```{r rwsim, cache=F, fig.height=5.5}
+# Generate a RW model using arima.sim
+random_walk <- arima.sim(model = list(order = c(0,1,0)), n = 100)
+ts.plot(random_walk)
+
+```
+
+<!-- -Ten realizations of the random walk $\{Y_t\}$ -->
+
+<!-- ```{r, fig.show='hide'} -->
+<!-- B <- 10 -->
+<!-- n <- 60 -->
+<!-- set.seed(36849) -->
+<!-- e <- matrix(rbinom(B*n,1,.5), ncol=B, nrow=n) -->
+<!-- e <- ifelse(e==0, -1, 1) -->
+<!-- e <- rbind(rep(0,B),e) -->
+<!-- y <- apply(e,2,cumsum) -->
+<!-- plot.ts(y[,1], ylim=c(min(y), max(y)), ylab="Y") -->
+<!-- for(i in 2:B){ -->
+<!--   points(0:n, y[,i], type="l") -->
+<!-- } -->
+<!-- ``` -->
+
+------
+
+### **Random Walk with drift**
+
+- walk with a drift is simply has constant c and WN variance
+$$Y_t = c+Y_{t-1}+\epsilon_t$$
+```{r RWD, echo=FALSE, fig.cap="", out.width = '100%'}
+knitr::include_graphics("C:/Users/zidanac/Documents/STAT411_Time_Series/STAT411_time series/STAT411/RWD.jpg")
+```
+
+--------------------
+
+### **Correlogram for Random walk** 
+
+```{r fitted Rw, fig.height=5.5}
+acf(diff(random_walk))
+
+```
+
+-----------------
+
+### **AutoRegressive Models**
+
+$Y_t$ is an **autoregressive process** of order p, abbreviated to AR(p), if
+$$Y_t = \alpha_1 Y_{t-1}+\alpha_2 Y_{t-2}+ ......+ \alpha_p Y_{t-p}+e_t$$
+where $e_t$ is white noise and the $\alpha_k$ are the model parameters with $\alpha_p \ne 0$ for an order p process. Ths can be expressed as a polynomial of order p.
+-using backward shift operator:
+$$\Phi_p(B)Y_t = (1-\alpha_1B-\alpha_2B^2- ....-\alpha_pB^p)Y_t = e_t$$
+- Note
+1. The random walk is the special case AR(1) with $\alpha_1 = 1$
+2. The exponential smoothing model is the special case $\alpha_i= \alpha(1-\alpha)^i$ for $i=1,2,..\; ,\;\;p\rightarrow  \infty$
+3. AR is a regression of $Y_t$ on past terms from the same series
+
+--------------
+
+### **Moving Average**
+
+**Exercise: Moving Average**
+
+Consider the moving average process $\{Y_t\}$
+\[
+Y_t = \frac{e_t + e_{t-1}}{2}
+\]
+
+Show that
+
+1. $\mu_t = 0$
+2. $V(Y_t) = \sigma^2_e/2$
+3. $\displaystyle \gamma_{t,s} = \begin{cases} 
+\sigma^2_e/2 &  \quad \mbox{ for } |t-s| = 0\\
+\sigma^2_e/4 &  \quad \mbox{ for } |t-s| = 1\\
+0  & \quad \mbox{ for } |t-s| > 1
+\end{cases}$
+
+4. $\displaystyle \rho_{t,s} = \begin{cases} 
+1 &  \quad \mbox{ for } |t-s| = 0\\
+1/2 & \quad \mbox{ for } |t-s| = 1\\
+0  & \quad \mbox{ for } |t-s| > 1
+\end{cases}$
+
+---------------------------
+
+# Stationarity
+
+## **Strict Stationarity**
+
+A stochastic process $\{Y_t\}$ is said to be **strictly stationary**
+if the joint distribution of 
+$$ Y_{t_1}, Y_{t_2}, \ldots, Y_{t_n}$$
+is the same as the joint distribution of 
+$$Y_{t_1-k}, Y_{t_2-k}, \ldots, Y_{t_n-k}$$
+for all time points $t_1, \ldots, t_n$ and all time lags
+$k$. 
+
+
+**Remark 1**
+
+- The distribution of $Y_t$ is the same as the distribution of $Y_{t-k}$ for all $k$.
+- This means that the $Y$'s are identically distributed. 
+
+- Thus $\mu_t = \mu_{t-k}$ and $$V(Y_t) = V(Y_{t-k})$$ for all $k$ resulting in constant mean and variance functions.
+
+---
+
+ **Remark 2**
+
+The joint distribution of $(Y_t, Y_s)$ is the same as that
+of $(Y_{t-k}, Y_{s-k})$ and thus $Cov(Y_t,Y_s) = Cov(Y_{t-k},
+Y_{s-k})$.
+\begin{align*}
+\gamma_{t,s} = Cov(Y_t,Y_s) & = Cov(Y_{t-s}, Y_0) & 
+\mbox{lag } s\\
+& = Cov(Y_0, Y_{s-t}) & \mbox{lag } t-s \\
+& = Cov(Y_{s-t}, Y_0) & \mbox{commute} \\
+& = Cov(Y_{|s-t|}, Y_0) =  \gamma_{|s-t|,0}
+\end{align*}
+So, the ACVF depends only on the time lag. We write
+\[ \gamma_k = Cov(Y_t, Y_{t-k}) \quad \mbox{and} \quad \rho_k
+= Corr(Y_t, Y_{t-k}) = \frac{\gamma_k}{\gamma_0}\]
+\noindent {\bf Properties} (Prove!)
+\begin{enumerate}
+\item $\gamma_0 = V(Y_t)$, \qquad $\rho_0 = 1$
+\item $\gamma_k = \gamma_{-k}$, \qquad $\rho_k = \rho_{-k}$
+\item $|\gamma_k| \leq \gamma_0$, \qquad $|\rho_k| \leq 1$
+\end{enumerate}
+
+---------------
+
+## **Second-order Stationarity**
+
+A stochastic process $\{Y_t\}$ is said to be **second-order stationary** or simply **stationary** if
+\begin{enumerate}
+\item the mean function is constant over time, and
+\item $\gamma_{t,t-k} = \gamma_{0,k}$.
+\end{enumerate}
+
+- We write $\gamma_k$ for $\gamma_{t,t-k}$ for statonary
+processes. 
+
+- A strictly stationary process whose mean and autocovariance functions exist is also a (second-order) stationary process. 
+
+- From here on, we will only use this weaker form of staionarity.
+
+----------------------------
+
+**Example: White Noise**
+
+Let $\{e_t\}$ be a sequence of iid random variables with mean 0 and
+variance $\sigma^2_e$. Denote this by $e_t \ \sim \ WN(0,\sigma^2_e)$.
+Then $\mu_t = E(e_t) = 0$ and 
+\[ \gamma_{t,t-k} = \begin{cases}
+\sigma^2_e &\quad \mbox{if } \ t=t-k \ \Leftrightarrow \ k=0\\
+0 &\quad \mbox{if } \  k \ne 0
+                       \end{cases}
+\Bigg\} = \gamma_{0,k}
+\]
+
+So, $\{e_t\}$ is stationary.
+
+In fact $\{e_t\}$ is strictly stationary since 
+\begin{align*}
+P(e_{t_1} \leq a_1, \ldots, e_{t_n} \leq a_n) & = P(e_{t_1} \leq a_1)
+\times  \cdots \times P(e_{t_n} \leq a_n) \\
+& = P(e_{t_1 - k} \leq a_1) \times \cdots \times P(e_{t_n - k}
+\leq a_n) \\
+& = P(e_{t_1 - k} \leq a_1, \ldots, e_{t_n - k} \leq a_n)
+\end{align*}
+
+------------------------
+
+**AR(p) stationarity**
+
+- AR(p) is **Stationary** if the characteristiic polynomial equation $\Theta_p(B) = 0$, where B is formally treated as a number (real or complex), roots **all exceed unity in absolute value** for the process to be stationary. 
+- Notice that the random walk has root $B = 1$ and is non-stationary. 
+
+- **Class Exercise Examples** State the order and state if its stationary or not
+
+1. $Y_t = 0.5Y_{t-1}+e_t$
+2. $Y_t = Y_{t-1}-0.25Y_{t-2}+e_t$
+3.  $Y_t =0.5 Y_{t-1}+0.5Y_{t-2}+e_t$
+4.  $Y_t = -0.25Y_{t-1}+e_t$
+
+```{r polyroot}
+polyroot(c(1, -0.5))
+polyroot(c(1,-1, 0.25))
+polyroot(c(1, -0.5,-0.5))
+polyroot(c(1, 0.25))
+```
+
+
+---------------
+
+**MA Exercises**
+
+1. Consider the moving average process $Y_t = e_t - \theta e_{t-1}$. Show that $\{Y_t\}$ is stationary.
+2. Show that the random walk process $Y_t = Y_{t-1} + e_t$ is not stationary.
+3. For the random walk process $\{Y_t\}$, show that the differenced  process $\nabla Y_t = Y_t - Y_{t-1}$ is stationary.
+
+------------
+
+**Auto covariance and Correlation**
+
+Let $X_t$ be a stationary time series. The autocovariance function (ACVF) of
+$X_t$ at lag h is 
+$$\gamma_x(h)=Cov(X_{t+h}, X_t)$$.
+The autocorrelation function (ACF) of $X_t$ at lag h is
+$$\rho_X(h)= \frac{\gamma_x(h)}{\gamma_x(0)}=Cor(X_{t+h}, X_t)$$
+
+- in reall life we use sample dat to construct models and hence we use sample autocarrelation more 
+
+
+**Definition Sample Variance and correlation**
+
+Let $x_1, . . . , x_n$ be observations of a time series with **sample mean**of $$\bar{x}= \frac{1}{1}\sum_{t=1}^{n}x_t$$
+
+------------
+
+The sample autocovariance function is
+$$\displaystyle\hat{\gamma}(h)=n^{-1}\sum_{t=1}^{n-|h|}(x_{t+|h|}\bar{x})(x_t-\bar{x}),\;\;\;\;-n<h<n$$
+The sample autocorrelation function is
+$$\hat{\rho}(h)= \frac{\rho(h)}{\rho(0)},\;\;\;\;-n<h<n$$
+
+
+

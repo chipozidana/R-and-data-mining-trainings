@@ -1,0 +1,320 @@
+---
+output:
+  beamer_presentation: default
+  html_document: default
+  pdf_document: default
+  slidy_presentation: default
+---
+
+```{r LOGO, echo=FALSE, fig.cap="", out.width = '80%'}
+knitr::include_graphics("C:/Users/zidanac/Documents/STAT202/logo.png")
+```
+
+
+---
+title: 'Chapter 1: Introduction to Time Series'
+author: "Chipo Zidana"
+date: "BIUST"
+output:
+  beamer_presentation:
+    colortheme: seagull
+    fonttheme: serif
+    keep_tex: yes
+    toc: yes
+    latex_engine: pdflatex
+  slidy_presentation: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+## Why times series?
+
+1. In normal regression  $Y = a + bX + e$, remember many a times x is not available or you do not know facotors related to Y.
+
+2. Many times you only have y variable in place over time prerion and based on historicall pattern you extrapolate.
+
+3. Note Time series $Y_t = bY_{t-1} +e$ where  no different independent variables but  using past values to forecast future values
+- depends on single variable which is dependent on time
+-One variable is univariate time series
+
+eg. Suppose yu have sales in a car sale. you sell 2 cars in jan 7 in feb etc so you us
+ 
+
+
+## **Time Series Data**
+
+Data obtained from observations collected sequentially over time are extremely common.
+
+- **Definition**: 
+1. A **time series** is a set of observations on the values that a variable takes at different times. eg stock price over 30 days
+2.  series of data points indexed in a time  order 
+3.  such data can collected over regular time interval (interval is same) ie  monthly, weekly, yearly , daily or hourly
+
+- **Business**: weekly interest rates, daily closing stock prices, monthly price indices, yearly sales figures, and so forth. 
+
+- **Meteorology**: daily high and low temperatures, annual precipitation and drought indices, cyclones times and hourly wind speeds. 
+
+- **Agriculture**: annual figures for crop and livestock production, soil erosion, and export sales. 
+
+- **Medicine**: electrical activity of the heart at millisecond intervals.
+
+- **Energy/electricity predictions**: Amount of energy required at given times
+
+- **Demography**: Forecasts of population by country and regions are
+made routinely, often stratified by variables such as gender, age,
+and race.
+
+## **Qualitative Forecasting Techiques**:
+
+- are often subjective in nature and require judgment on the part of experts.
+
+- often used in situations where there is little or no historical data on which to base the forecast. 
+
+- **eg**introduction of a new product, for which there is no relevant history. 
+
+- company might use the expert opinion of sales andmarketing personnel to subjectively estimate product sales during the new product introduction phase of its life cycle.
+
+ - Sometimes these use make use of marketing tests, surveys of potential customers, and experience with the sales performance
+of other products (both their own and those of competitors). 
+
+- Methods: Delphi Method.
+
+## **Quantitative Forecasting**
+
+- summarizes patterns in the data and expresses a statistical relationship between previous and current values of the variable. 
+
+- use model to project the patterns in the data into the future.
+
+- ie forecasting model is used to extrapolate past and current behavior into the future. 
+-  common models:regression models, smoothing models, and general time series models.
+
+- Regression models make use of relationships between the variable of
+interest and one or more related predictor variables. 
+- Smoothing models typically employ a simple function of previous observations to
+provide a forecast of the variable of interest. 
+
+- General time series models employ the statistical properties of the historical
+data to specify a formal model and then estimate the unknown parameters
+of this model (usually) by least squares. 
+
+## Objectives of time series analysis:
+
+-  **description** - summary statistics, graphs
+- **analysis and interpretation** - find a model to describe the time dependence in the data, can we interpret the model?
+-  **forecasting or prediction ** - given a sample from the series, forecast the next value, or the next few values
+-  **control ** - adjust various control parameters to make the series fit closer to a target
+-  **adjustment ** - in a linear model the errors could form a time series of correlated observations, and we might want to adjust estimated variances to allow for this
+
+## Time Series Examples
+
+- **Botswanan Weather**
+
+The World Bank Global Climate Change Knowledge Portal
+<http://sdwebx.worldbank.org/climateportal/index.cfm>
+https://climateknowledgeportal.worldbank.org/download-data
+
+- **Rainfall**: Monthly rainfall 1901 -- 2012
+
+```{r, message=FALSE, warning=FALSE}
+# BW Rainfall in mm
+BW <- read.csv(file ="BWrain_new.csv", header = T)
+head(BW)
+attach(BW)
+```
+
+---------------
+
+**Monthly Rainfall**
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+library(astsa)
+library(autoplotly)
+library(ggplot2)
+head(BW)
+z = ts(BW , start = 1901,  frequency = 12)
+plot(z[,1], main ="Botswana temperature", xlab = "Year", ylab ="Degrees")
+
+```
+
+
+----------------------
+
+**Average Yearly Rainfall**
+
+```{r, echo=FALSE}
+## Yearly Aggregate
+AR <- aggregate(z[,1] ~ z[,2], data=BW, mean)
+plot(AR, xlab = "Year", ylab = "Temperature")
+ plot(lag(z[,1]), z[,1], xlab="Rainfall Last Year")
+
+```
+
+-----------------
+
+**Monthly Temperature**
+
+```{r Rainfall, echo=FALSE, message=FALSE, warning=FALSE}
+BWT <- read.csv(file="BWtemp_new.csv")
+## Temperature in celsius
+temp = ts(BWT , start = 1901,  frequency = 12)
+plot(temp[,1], main ="Botswana temperature", xlab = "Year", ylab ="Degrees")
+
+
+
+```
+
+------------------
+
+ **Average Yearly Temperature**
+
+```{r Temperature, echo=FALSE}
+## Yearly Aggregate
+
+AT<- aggregate(temp[,1] ~ temp[,2], data=BW, mean)
+plot(AT, xlab = "Year", ylab = "Temperature")
+plot(lag(temp[,1]), temp[,1], xlab="Rainfall Last Year")
+
+
+
+```
+
+-----------------
+
+**Decomposong**
+
+```{r decompose}
+temp.dec = decompose(temp, type = "mult")
+rain.dec = decompose(z, type = "mult")
+
+plot(temp.dec$trend)
+plot(rain.dec$trend)
+seaosonal = temp.dec$seasonal
+```
+
+--------------------
+
+**Unemployment**
+
+```{r unemployment}
+library(readr)
+bw_youth_unempl <- read_csv("bw_youth unempl.csv")
+
+attach(bw_youth_unempl)
+bw_youth_unempl.ts<- ts(bw_youth_unempl, start=1999, end=2019, freq = 1)
+
+```
+
+
+----------------------
+
+```{r unemploy}
+plot(bw_youth_unempl.ts[,2], ylab = "unemployed (%)")
+
+```
+
+-----------------------------
+
+**Uses of Time series**
+
+Time series plots can reveal patterns:
+
+1. random,
+
+2. trends, 
+
+3. level shifts,
+
+4. periods or cycles,
+
+5. unusual observations,
+
+6. or a combination of patterns
+
+7. **forecasting**
+
+- **Qualitative Techiques**:are often subjective in nature and
+require judgment on the part of experts.
+
+- often used in situations where there is little or no historical data on which to base the forecast. 
+
+- **eg**introduction of a new product, for which there is no relevant history. 
+
+- company might use the expert opinion of sales andmarketing personnel to subjectively estimate product sales during the new product introduction phase of its life cycle.
+
+ - Sometimes these use make use of marketing tests, surveys of potential customers, and experience with the sales performance
+of other products (both their own and those of competitors). 
+
+- Methods: Delphi Method.
+
+------------------------
+
+
+- **Quantitative Techniques**: formal use of historical data
+and a forecasting model.
+- summarizes patterns in the data and expresses a statistical relationship between previous and current values of the variable. 
+- Uses model to project the patterns in the data into the future.
+
+- forecasting model can be used to extrapolate past and current behavior into the future. 
+- Methods: 
+1. Regression models, 
+2. smoothing models,
+3. Time series models: employ the statistical properties of the historical
+data to specify a formal model and then estimate the unknown parameters
+of this model (usually) by least squares. 
+
+## Basic Time Series Models
+
+---------------------
+
+**Zero Mean Models**
+
+1. IID Noise - no trend or seasonal component in it, observations are identical and independent with mean zero
+$$P[X_1\leq x_1, .......X_n\leq x_1]= \prod P(X_i\leq x_i)=\prod F(x_i)$$
+where F is cum pdf. Also called White Noise (WN)
+2. Binary process - is iid such that $\{X_t,\; t= 1,2,.....\}$ with $$P[X_t =1] = p,\;\; P[X_t =-1] = 1-p$$
+where $p = \frac{1}{2}$ eg tossing a coin
+3. Random Walk ($R_t$) - obtained by cumulatively summing IID variables. Thus random walk with mean zero is obtained by defining $S_0 = 0$ and 
+$$S_t = X_1+X_2+........+X_t, \;\; t = 1,2,3.....$$
+
+--------------------
+
+
+**Models with Trend and seasonality**
+
+- in many cases a clear trend is observed in data like in th eunemployment data such that a zero mea model s unappropriate for the data. In such cases models that capture the trend like:
+$$X_t = m_t +s_t+ Y_t $$ where $m_t$ is changing function known as **trend component** $s_t$ is the seaonality componemt and $Y_t$ has zero mean. $m_t$ is normally fit using parametric functions family using the least square methodsuch that we minimise $\sum(x_t-m_t)^2$
+
+-  Simple Moving Average (MA)
+
+- **Basic Assumption**
+- Simplifying assumptions for time series: 
+a.  Consecutive observations are equally spaced 
+b.  Apply a discrete-time observation index 
+c.  This may only hold approximately 
+- *Ex*. Daily log returns on stock may only be available( for weekdays.  Ex. Monthly CPI values are equally spaced by month, ( not by day.
+
+----------
+
+**Model Building Strategy**
+
+Box and Jenkins (1976)
+
+1. model specification (or identification)
++ plot of the series- identify trend , seasonality, outlier etc
++ statistics from the data
++ subject matter knowledge- remove the trend and seasonality
+2. model fitting
++ best possible estimates of the model parameters
+3. model diagnostics
++ assessing the quality of the model
+
+**When not to use Time Series**
+
+1. When values are  constant (car sold for months are same)
+2. values can be represented by known functions ega sin/cos function
+3. Non stationary data (means zero and constant )
+

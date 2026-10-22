@@ -1,0 +1,742 @@
+---
+title: 'Chapter 5: Nonstationary ARMA Time Series'
+author: "Time Series Analysis"
+date: "BIUST"
+output:
+  beamer_presentation:
+    colortheme: seagull
+    fig_caption: no
+    fonttheme: serif
+    keep_tex: yes
+    toc: yes
+  slidy_presentation: default
+  ioslides_presentation: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(fpp3)
+library(forecast)
+library(astsa)
+
+```
+
+
+
+# **Nonstationary Time Series**
+
+------------------------------
+
+**Purpose**
+
+- Any time series that does not have a mean function that is free of the time $t$ is nonstationary.(due to trend /seasonality) 
+
+- For example, given $e_t \sim WN(0,\sigma^2)$ (this will be assumed
+hereafter), the process $Y_t = \mu_t + e_t$ where $\mu_t$ is a nonconstant function of $t$, is a nonstationary series. (trend)
+
+- Although we can  achieve stationarity thrugh differenced series, they needs to be aggregated (or‘integrated’) to recover the original series
+
+- The underlying stochastic process is called autoregressive integrated moving average **ARIMA**
+
+- non-stationary can also be due to variance is serially correlated
+(technically known as **conditionally heteroskedastic** (volatility/ variance change)
+
+- *Volatility* - Common in financial series OR climatic records
+
+- an autoregressive conditional heteroskedastic (ARCH) and Generalised ARCH (GARCH) models common for volatility
+
+---------------------
+
+
+**Example: Yearly BW Temperature**
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(astsa)
+BW <- read.csv(file="BWtemp.csv")
+BWy <- aggregate(Temperature ~ Year, data=BW, mean)
+with(BWy, plot(Year, Temperature, type="o"))
+```
+
+---------------------
+
+ **Non Seasonal ARIMA Models** 
+ 
+ 1. **Differencing**
+ 
+-As we have seen that one method of inducing stationarity
+is differencing.
+
+- Differencing can **remove trends**, whether these trends are stochastic,
+as in a random walk $\nabla Y_t =Y_t-Y_{t-1}= e_t$, or deterministic, as in the case of a linear trend $Y_t = a+bt+e_t$ then:
+$$\nabla Y_t = b+e_t-e_{t-1}= b+ \nabla e_t$$
+
+- However, this approach may not always work or several
+stages of differencing may be needed to obtain stationarity.
+
+- **Remark 1**: The series $Y_t = \beta_0 + \beta_1 t^2 + e_t$ needs to be differenced twice before obtaining stationarity.
+
+- **Remark 2** differencing a linear trend with white noise is an MA(1) process, whereas subtraction of the trend, a+bt, would give white noise.
+
+----------------------
+
+**Intergrated model**
+
+- A series $Y_t$ is integrated of order $d$, denoted as $I(d)$, if the $d^{th}$ difference of $Y_t$ is white noise $e_t$i.e., $\nabla^d Y_t= e_t$. Since $\nabla^d \equiv (1-B)^d$, where B is the backward shift operator, a series $Y_t$ is integrated of order d if
+
+$$(1-B)^d Y_t = e_t$$
+
+- RANDOM WALK IS SPECIAL CASE OF $I(d) = 1$
+
+- A series $Y_t$ follows ARIMA(p,d,q) if the dth difference of $Y_t$ are an ARMA(p,q) process. 
+
+- Suupose, $X_t = (1-B)^dY_t$, where B is the backward shift operator, then  
+$$\Phi_p(B) X_t = \Theta_q(B)e_t$$
+
+- Replacing $X_t$ gives
+
+$$\Phi_p(B)(1-B)^d Y_t= \Theta_q(B)e_t$$
+
+--------------------------
+
+**EXAMPLES ARIMA**
+
+1. $Y_t = Y_{t-1}+e_t+\theta e_{t-1}$ is ARIMA (0,1,1)/ IMA(1,1)
+
+$$(1-B)Y_t =(1+\theta B)e_t$$
+
+2. $Y_t = \phi Y_{t-1}+Y_{t-1}-\phi Y_{t-2}+e_t$ is ARIMA(1,1,0)/ARI(1,1)
+
+$$(1-\phi B)(1-B)Y_t =e_t$$
+
+3. In general  ARIMA(0,d,q)=IMA(d,q) and ARIMA(p,d,0) = ARI(p,d)
+
+- To see which model this represents, collect together like terms, factorise them, and express them in terms of the backward shift operator
+
+
+
+----------------------------
+
+
+ **Nonstationary AR(1)**
+ 
+\[ Y_t = \phi Y_{t-1} + e_t \;.\]
+
+- AR(1) is stationary if $|\phi| < 1$. 
+
+- The case $|\phi| \geq 1$ results in a nonstationary series.
+
+- The case $|\phi| > 1$ results in an explosive AR(1) series whereas the case $|\phi| = 1$ gives the random walk model. 
+
+- For the case $|\phi| > 1$ we can see that:
+\[ Y_t = e_t + \phi e_{t-1} + \phi^2 e_{t-2} + \cdots + \phi^{t-1}e_1 +
+\phi^t Y_0 \;.\]
+
+- It is seen that the influence of the innovation increases as we move
+further back in time. 
+
+-------------
+
+- In fact, the weights applied grow exponentially fast. 
+
+- Defining $Y_0 \equiv 0$, the variance function is
+\[ V(Y_t) = \sigma^2 \sum_{k=0}^{t-1} (\phi^2)^k = {\frac
+{{\sigma}^{2} \left(  \left( {\phi}^{2} \right) ^{t}-1 \right) 
+}{{\phi}^{2}-1}}
+\]
+
+- The ACVF and ACF are
+\[ \gamma_{t,t-k} =  {\frac {{\sigma}^{2} \phi^k \left(  \left(
+{\phi}^{2} \right) ^{t-k}-1 \right) 
+}{{\phi}^{2}-1}}
+\]
+
+--------------------
+
+\[ \rho_{t,t-k} =
+\frac{\gamma_{t,t-k}}{\sqrt{V(Y_t)V(Y_{t-k})}} =
+\phi^k \sqrt{\frac{\left(  \left({\phi}^{2} \right) ^{t-k}-1
+\right)}{\left(  \left( {\phi}^{2} \right) ^{t}-1 \right)}} \;,\]
+respectively. For large $t$ and small $k$ we have
+\[ \rho_{t,t-k} \approx
+\phi^k \sqrt{\frac{  \left({\phi}^{2} \right) ^{t-k}}{ \left(
+{\phi}^{2} \right) ^{t} }} \ = \ 1 \;.\]
+
+---------------------
+
+**Differencing: Deterministic Trend**
+
+- Suppose $Y_t = M_t + X_t$, where $\{X_t\}$ is stationary.
+
+- If we assume that $M_t$ is *slow changing deterministic trend*, then differencing may be used to obtain stationarity.
+
+- **Example:** $M_t$ is constant over two consecutive time points. Then the LS method estimates $M_t$ by minimizing
+\[\sum_{i=0}^1 (Y_{t-i} - M_t)^2 \]
+
+- This gives $$\hat{M}_t = (Y_t + Y_{t-1})/2$$
+
+--------------------------
+
+- Then we can *detrend* the series as
+\begin{eqnarray*}
+Y_t - \hat{M}_t = Y_t - (Y_t + Y_{t-1})/2\\
+= (Y_t - Y_{t-1})/2\\
+= \nabla Y_t/2
+\end{eqnarray*}
+
+ **Differencing: Stochastic Trend**
+
+Consider a process $\{Y_t\}$ defined by
+\[ Y_t = M_t + e_{1t} \]
+If we assume that $M_t$ is *slow changing stochastic trend*, then differencing may be used to obtain stationarity.
+\bigskip
+
+
+**Example:** $\{M_t\}$ is the random walk process given by
+\[ M_t = M_{t-1} + e_{2t} \;.\]
+Here $e_{1t} \sim WN(0, \sigma^2_1)$ and  $e_{2t} \sim WN(0,
+\sigma^2_2)$ are two independent white noise processes. Then
+\[
+\nabla Y_t \ = \ \nabla M_t + \nabla e_{1t} \ = \ e_{2t} + e_{1t} -
+e_{1(t-1)}\;.
+\]
+
+--------------
+
+The mean function and the ACVF of $\{\nabla Y_t\}$ are
+\[ \mu_t = E(Y_t) = 0 \;,\]
+and 
+\begin{align*}
+\gamma_k & = Cov(\nabla Y_t, \nabla Y_{t-k}) \\
+& = Cov\left(e_{2t} + e_{1t} - e_{1(t-1)} \ , \ e_{2(t-k)} +
+e_{1(t-k)} - e_{1(t-k-1)}\right) \\
+& = \begin{cases}
+\sigma_2^2 + 2 \sigma_1^2 \;, & \qquad  k = 0 \\
+- \sigma_1^2 \;, & \qquad k = 1 \\
+0 \;, & \qquad k \geq 2\;,
+    \end{cases}
+\end{align*}
+respectively. The mean function does not depend on the time $t$ and the
+ACVF is dependent on the time lag alone. Thus $\{\nabla Y_t\}$ is
+stationary.
+
+----------------
+
+**BW Temperature: Differenced**
+
+```{r}
+with(BWy, plot(diff(Temperature), type="o"))
+```
+
+-----------
+
+**Twice Differencing:Deterministic Trend**
+
+- Suppose $Y_t = M_t + X_t$, where $\{X_t\}$ is stationary.
+
+- If $M_t$ has a *slow changing rate of change*, then twice differencing may be used to obtain stationarity.
+
+- **Eg:** $M_t$ is constant over *three* consecutive time points. Then the LS method estimates $M_t$ by minimizing
+\[\sum_{i=-1}^1 (Y_{t-i} - M_t)^2 \]
+
+- This gives $\hat{M}_t = (Y_{t-1} + Y_t + Y_{t+1})/3$
+
+--------------
+
+- Then we can *detrend* the series as
+$$Y_t - \hat{M}_t = Y_t - (Y_{t-1} + Y_t + Y_{t+1})/3 = (-1/3)(Y_{t+1} - 2Y_t + Y_{t-1}) $$
+$$ = (-1/3) \nabla^2 Y_{t+1}$$
+
+**Stochastic Trend**
+
+- Suppose $Y_t = M_t + e_t$, where
+$$M_t = M_{t-1} + W_t$$
+$$W_t = W_{t-1} + \epsilon_t$$
+where $\{e_t\}$ and $\{\epsilon_t\}$ are two independent white noise processes.
+
+- The rate of change $\nabla M_t$ is changing slowly over time.
+
+------------
+
+- Then
+$$\nabla^2 Y_t = \nabla W_t + \nabla^2 e_t = \epsilon_t + e_t - 2e_{t-1} + e_{t-2}$$
+which has an MA(2) ACF.
+
+
+**ARIMA Invertibility**
+
+The inverse of the polynomial $\Phi(B)$ is $\Phi^{-1}(B)$ such that $\Phi(B)\Phi^{-1}(B) = 1$.
+\bigskip
+
+- *AR(1)*:Consider, for example, the AR(1) process $\Phi(B)Y_t = e_t$ where $\Phi(B) = 1 - \phi B$. Then
+$$\Phi^{-1}(B) = \frac{1}{1 - \phi B} = \sum_{i=0}^\infty \phi^i B^i$$
+if $|\phi| < 1$.
+
+To see this, note that if $|\phi| < 1$
+$$\lim_{k \rightarrow \infty}(1 - \phi B)\sum_{i=0}^k \phi^i B^i = 1$$
+-------------
+
+- Take the **ARMA ($p,q$)** model $\Phi(B)Y_t = \Theta(B)e_t$, where $\Phi(B)$ and $\Theta(B)$ are finite polynomials.
+
+- If $\Phi(B)$ is invertible, then the ARMA($p,q$) model can be written as the $MA(\infty)$ 
+$$Y_t = \Phi^{-1}(B)\Theta(B)e_t = \Psi(B) e_t = e_t + \psi_1 e_{t-1} + \psi_2 e_{t-2} + \cdots $$
+
+- If $\Theta(B)$ is invertible, then the ARMA($p,q$) model can be written as the $AR(\infty)$ 
+$$e_t = \Theta^{-1}(B)\Phi(B)Y_t = \Psi(B)Y_t = Y_t + \psi_1 Y_{t-1} + \psi_2 Y_{t-2} + \cdots $$
+
+- An AR process is stationary if $\Phi(B)$ is invertible. A polynomial is invertible if its characteristic roots are outside the unit circle.
+
+-----------------------------
+
+**ARIMA ($p,1,q$)**
+
+$\{Y_t\}$ is ARIMA($p,1,q$) if $X_t = Y_t - Y_{t-1}$ is ARMA($p,q$)
+$$X_t = \phi_1 X_{t-1} + \cdots + \phi_p X_{t-p} + e_t - \theta_1 e_{t-1} - \cdots - \theta_q e_{t-q}    $$
+which can be written as
+$$Y_t = (1+\phi_1) Y_{t-1} + (\phi_2 - \phi_1)Y_{t-2} + \cdots + (\phi_p - \phi_{p-1}) Y_{t-p}  - \phi_p Y_{t-p-1}$$
+$$+ e_t - \theta_1 e_{t-1} - \cdots - \theta_q e_{t-q} $$
+Looks like ARMA($p+1, q$) but the characteristic polynomial is
+$$\Phi(z) = 1 - (1 + \phi_1) z - (\phi_2 - \phi_1)z^2 - \cdots - (\phi_p - \phi_{p-1}) z^p  + \phi_p z^{p+1}$$
+Factoring, we get
+$$\Phi(z) = [1 - \phi_1 z - \phi_2 z^2 - \cdots - \phi_p z^p](1-z) $$
+Thus $\Phi(z)$ has a root at $z = 1$. So, *not stationary*.
+
+-------------------------------
+
+ **ARIMA($p,1,q$)**
+
+- Nonstationary processes are not in statistical equilibrium. So, it is not practical to assume that they start at $t =-\infty$.
+
+- It is common to assume that there is a starting time $-m < 1$. Then 
+
+$$Y_t = \sum_{i=-m}^t X_t$$
+an accumulation of finite stationary time series.
+
+a. **IMA(1,1) $\equiv$ ARIMA(0,1,1)**
+
+- The IMA(1,1) model is the differenced MA(1) given by
+$$Y_t = Y_{t-1} + e_t - \theta e_{t-1}$$
+- This can be written as
+$$Y_t = e_t + (1 - \theta)e_{t-1} + (1-\theta)e_{t-2} + \cdots + (1-\theta)e_{-m} - \theta e_{-m-1}$$
+So, the weights on the white noise terms do not decay.
+
+------------------------
+
+- Then $V(Y_t) = [1 + \theta^2 + (1-\theta)^2(t+m)]\sigma^2$ and
+$$Corr(Y_t, Y_{t-k}) = \frac{1-\theta + \theta^2 + (1-\theta)^2(t+m-k)}{\sqrt{V(Y_t)V(Y_{t-k})}} \approx 1  $$
+for large $m$ and moderate $k$. 
+
+- So, the ACF is strongly positive for many lags $k$.
+
+
+**IMA Simulation**
+
+```{r}
+set.seed(267)
+ima11 <- arima.sim(model=list(order=c(0,1,1), ma=c(0.5)), n=200)
+
+```
+
+------------
+
+```{r ima}
+par(mfrow = c(1,2))
+ts.plot(ima11, type="o")
+acf(ima11)
+
+```
+
+----------------
+
+
+**Differenced IMA**
+
+```{r}
+par(mfrow = c(2,2))
+ts.plot(diff(ima11), type="o")
+acf(diff(ima11))
+pacf(diff(ima11))
+```
+
+
+---
+
+
+```{r}
+set.seed(267)
+ima11.n30 <- arima.sim(model=list(order=c(0,1,1), ma=c(0.5)), n=30)
+par(mfrow = c(1,2))
+acf(ima11.n30)
+ts.plot(ima11.n30, type="o")
+```
+
+---------------------
+
+ **ARI(1,1) $\equiv$ ARIMA(1,1,0)**
+
+$\{Y_t\}$ is an ARI(1,1) process if $\{\nabla Y_t\}$ is an AR(1) process. Thus
+$$Y_t - Y_{t-1} = \phi(Y_{t-1} - Y_{t-2}) + e_t$$
+or
+$$Y_t = (1 + \phi) Y_{t-1} - \phi Y_{t-2} + e_t$$
+This looks like an AR(2) process. However, the characteristic polynomial
+satisfies
+$$\Phi(B)(1 - B)^d\Psi(B) = \Theta(B)$$
+In our case $\Phi(B) = 1 - \phi B, d = 1, \Theta(B) = 1$. Thus
+$$(1 - \phi B)(1-B)\Psi(B) = 1$$
+We can solve for the $\psi$ weights as
+$$\psi_k = \frac{1 - \phi^{k+1}}{1 - \phi}\;, \quad \mbox{for } k \geq 1.$$
+
+------------------
+
+**ARIMA(p,d,q) Models**
+
+1. In practice:\\
+- A root near 1 of the AR polynomial $\rightarrow$ differencing
+- A root near 1 of the MA polynomial $\rightarrow$ over-differencing\\
+
+2. In general, we have the following results:
+- Too little differencing: not stationary.
+- Too much differencing: extra dependence introduced.
+
+3. Finding the right d is crucial. For identifying preliminary values of d:
+- Use a time plot.
+- Check for slowly decaying (persistent) ACF/PACF.
+
+
+------------------
+
+## Unit root tests
+
+\alert{Statistical tests to determine the required order of differencing.}
+
+  1. Augmented Dickey Fuller test: null hypothesis is that the data are non-stationary and non-seasonal.
+  2. Kwiatkowski-Phillips-Schmidt-Shin (KPSS) test: null hypothesis is that the data are stationary and non-seasonal.
+  3. Other tests available for seasonal data.
+  
+------------------------------
+
+## KPSS test
+\fontsize{11}{12}\sf
+
+```{r, echo=TRUE}
+gafa_stock %>%
+  features(Close, unitroot_kpss)
+```
+------------------
+
+
+```{r, echo=TRUE}
+gafa_stock %>%
+  features(Close, unitroot_ndiffs)
+```
+
+
+------------
+
+
+
+
+## Automatically selecting differences
+
+STL decomposition: $y_t = T_t+S_t+R_t$
+
+Seasonal strength $F_s = \max\big(0, 1-\frac{\text{Var}(R_t)}{\text{Var}(S_t+R_t)}\big)$
+
+If $F_s > 0.64$, do one seasonal difference.
+
+\fontsize{10}{11}\sf
+
+```{r, echo=TRUE}
+h02 <- PBS %>%
+  filter(ATC2 == "H02") %>%
+  summarise(Cost = sum(Cost)/1e6)
+h02 %>% mutate(log_sales = log(Cost)) %>%
+  features(log_sales, list(unitroot_nsdiffs, feat_stl))
+```
+
+
+-----------------
+
+
+## Automatically selecting differences
+\fontsize{10}{11}\sf
+
+```{r, echo=TRUE}
+h02 %>% mutate(log_sales = log(Cost)) %>%
+  features(log_sales, unitroot_nsdiffs)
+h02 %>% mutate(d_log_sales = difference(log(Cost), 12)) %>%
+  features(d_log_sales, unitroot_ndiffs)
+```
+
+
+# **Seasonal ARIMA MODELS**
+
+-----------------------
+
+- A seasonal **ARIMA** model uses differencing at a lag equal to the number of
+seasons (s) to remove additive seasonal effects
+
+- As with lag 1 differencing to remove a trend, the lag s differencing introduces a moving average term
+
+- **ARIMA(p, d, q)(P, D, Q)$_s$** model can be most succinctly expressed using the backward shift operator
+
+$$\Phi_p(B)\phi_P(B^s)(1-B^s)^D(1-B)^dY_t = \Theta_q(B)\theta_P(B^s)e_t$$
+
+where $\Phi_p(B),\; \phi_P,\;\Theta_q(B), \;\theta_P$ are polynomials of orders $p,P,q,Q$, respectively.
+
+- A seasonal model **non stationary** even if $D=d=0$ and roots of $\Phi_p(B)$ all exceeds unity
+
+---------------------------
+
+ **EXAMPLES**
+
+1. A simple AR model with a seasonal period of 12 units, denoted as
+$ARIMA(0, 0, 0)(1, 0, 0)_{12}$, is $$Y_t = \phi Y_{t-12}+e_t$$
+
+- It is appropriate for monthly data when only the value in the month of the
+previous year influences the current monthly value. It is stationary when $|\phi^{\frac{-1}{12}}|>1$
+
+2. It is common to find series with stochastic trends that nevertheless
+have seasonal influences. eg extending (1) $Y_t = Y_{t-1}+\phi Y_{t-12}-\phi Y_{t-13}+e_t$ which cab be written as 
+
+$$ (1-B^{12})(1-B)Y_t =e_t$$
+
+3. A simple quarterly seasonal moving average model is $Y_t = (1-\theta B^4)e_t = e_t-\theta e_{t-4}$ stationary and only suitable for data without a trend. If the data also contain a stochastic trend, the model could be extended to include first-order differences, 
+$$Y_t = Y_{t-1}+e_t+\theta e_{t-4} $$
+which is an $ARIMA(0, 1, 0)(0, 0, 1)_4$ process
+
+----------------------------
+
+**Differencing effect** 
+
+- differencing at lag 1 will remove linear trend. There is a choice whether or not to include lag 1 differencing
+
+- **Eg** consider an additive seasona time series with period 4, and with a linear trend: $$Y_t = a+bt+s_t+e_t,\;\;\implies s_t = s_{t-4}$$
+
+- Differencing at lag 4 only implies $ARIMA(0,0,0)(0,1,1)_4$ with constant term 4b
+
+\begin{eqnarray}
+(1-B^4)Y_t &=& Y_t- Y_{t-4}\\
+ &=& a+bt- (a+b(t-4)+s_t-s_{t-4})+e_t-e_{t-4}\\
+ &=&4b+e_t-e_{t-4}
+\end{eqnarray}
+
+
+-----------------
+ 
+ - first-order differencing at lag 1 before differencing at lag 4. Then results in 
+ $ARIMA(0,1,1)(0,1,1)_4$:
+
+\begin{eqnarray}
+(1-B^4)(1-B)Y_t &=& (1-B)(b+s_t-s_{t-1}+e_t-e_{t-1}\\
+  &=&e_t-e_{t-1}-e_{t-4}+e_{t-5}
+ \end{eqnarray}
+ 
+ - Seasonal ARIMA models can potentially have a large number of parameters
+and combinations of terms.
+
+- **NB** Try out range of models and comapre them using AIC, BIC etc
+
+
+
+------------------------------
+
+**
+
+```{r seasonal}
+
+bw.ts = ts(BWy$Temperature, start =  1901, frequency = 12)
+plot(bw.ts)
+
+b1 =arima(bw.ts, order =c(1,0,0), seasonal = list(order = c(0,1,0), 12))
+
+b2 = arima(bw.ts, order =c(1,1,0), seasonal = list(order = c(0,1,0), 12))
+
+```
+
+
+---------------------
+
+
+**Log Transformation**
+
+- Best for series that exhibit volatility (changing variance)
+
+
+Suppose the mean and variance of the process $Y_t$ are connected as
+$$E(Y_t) = \mu_t \quad \mbox{and} \quad V(Y_t) = \mu^2_t\sigma^2$$
+
+Then a first order Taylor series expansion of $\log(Y_t)$ about $\mu_t$ gives
+$$\log(Y_t) = \log(\mu_t) + \frac{Y_t - \mu_t}{\mu_t}$$
+which has constant variance.
+
+## **Log Transformation**
+
+Suppose $Y_t$ has relatively stable percentage changes from one period to the next; that is,
+$$Y_t = (1 + X_t) Y_{t-1}$$
+Then
+$$\log(Y_t) - \log(Y_{t-1}) = \log(1 + X_t)$$
+
+If $|X_t|$ is small (say $|X_t| < .2$), then $\log(1 + X_t) \approx X_t$. Thus
+$$\nabla[\log(Y_t)] \approx X_t$$
+
+In financial time-series, $\nabla[\log(Y_t)]$ are called *returns*.
+
+
+<!-- ## US Electricity Production -->
+
+<!-- ```{r} -->
+<!-- data("elecsales") -->
+<!-- plot(elecsales) -->
+<!-- ``` -->
+
+<!-- --- -->
+
+<!-- ```{r} -->
+<!-- plot(log(elecsales)) -->
+<!-- ``` -->
+
+
+<!-- --- -->
+
+<!-- ```{r} -->
+<!-- plot(diff(log(elecsales))) -->
+
+<!-- acf2(diff(log(elecsales))) -->
+
+<!-- arima(log(elecsales), order = c(0,1,1)) -->
+<!-- arima(elecsales, order = c(0,1,1)) -->
+<!-- arima(diff(log(elecsales)), order = c(0,0,1)) -->
+
+<!-- ``` -->
+
+
+# Power Transformations
+## **Power Transformations**
+
+The Box-Cox family of power transformations is
+$$g(x) = \begin{cases}
+\frac{x^\lambda - 1}{\lambda} & \quad \lambda \ne 0\\
+\log(x) & \quad \lambda = 0
+\end{cases}$$
+
+- This transformation is useful for the case where the variance is not constant.
+
+- We need to search for optimal transformation ($\lambda$) on a grid, usually around 0.
+
+- This is the $\lambda$ that maximizes the log-likelihood function.
+
+---
+
+```{r, warning=FALSE}
+#BoxCox.ar(elecsaleds)
+```
+
+
+
+# MODELS FOR VOLATILITY
+
+
+
+
+
+1. **ARCH and GARCH MODELS**
+
+-------------------
+
+- When a variance is not constant in time but changes in a regular way, as in the airline and electricity data (where the variance increased with the trend), the series is called heteroskedastic.
+
+- In order to account for volatility, we require a model that allows for conditional
+changes in the variance.
+
+- One approach to this is to use an *autoregressive model for the variance process*.
+
+- A series $\omega_t$ is first-order autoregressive conditional heteroskedastic, denoted **ARCH** if
+
+$$\omega_t = e_t\sqrt {\alpha_0 +\alpha_1\omega_{t-1}^2}$$
+where $e_t$ is white noise
+
+-------------------------
+
+**Exercise**
+
+- Show that $\omega_t$ leads to volatility
+
+- **Solution**
+
+\begin{eqnarray*}
+Var(\omega_t)= E(\omega_t^2)\\
+&=& E(e_t^2)E(\alpha_0 +\alpha_1\omega_{t-1}^2)\\
+&=& E(\alpha_0 +\alpha_1\omega_{t-1}^2)\\
+&=& \alpha_0 +\alpha_1Var(\omega_{t-1}^2)
+\end{eqnarray*}
+
+**REMARK 1**: ARCH(1) behaves just like AR(1)
+
+**REMARK 2:** decay in the autocorrelations of the squared residuals should indicate whether an ARCH model is appropriate or not.
+
+-------------------------------
+
+**ARCH(p) Models**
+
+- ARCH model can be extended to a pth-order process by including higher lags. An ARCH(p) process is given by
+
+$$\omega_t = e_t\sqrt {\alpha_0 +\sum _{i=1}^p\alpha_i\omega_{t-i}^2}$$
+
+**GARCH(q,p)**
+
+- financial applications, is the **generalised ARCH model**, denoted GARCH(q, p), given by $\omega_t = e_t\sqrt{h_t}$ where
+
+
+$$h_t = \alpha-0 +\sum _{i=1}^p\alpha_i\omega_{t-i}^2+\sum _{j=1}^q\alpha_jh_{t-i}$$
+
+
+----------------------------------
+
+**Example1: Air passenger**
+
+
+```{r, warning=FALSE, echo=F, cache =F}
+library(MASS)
+par(mfrow = c(1,2))
+plot(AirPassengers)
+acf(AirPassengers)
+
+```
+
+--------------
+
+**EXample2**
+
+```{r sp500, warning=FALSE, echo=F, cache =F}
+data("SP500")
+par(mfrow = c(1,2))
+plot(SP500, type = "l")
+acf(SP500)
+```
+
+--------------------
+
+
+- If a series exhibits periods of increased variance, so the variance is correlated in
+time, the series exhibits volatility and is
+called conditional heteroskedastic.
+
+- **NB** the correlogram of a volatile series does not differ significantly from white noise for SP500, but the series is non-stationary since the variance is different at different times.
+
+- In this then volatility can be detected by looking at the correlogram of the squared values
+
+- there is evidence of serial correlation in the squared values, so there is evidence of conditional heteroskedastic behaviour and volatility
+
+---------------------
+
+
+```{r acf square}
+par(mfrow = c(1,2))
+acf((SP500 - mean(SP500))^2)
+acf((AirPassengers - mean(AirPassengers))^2)
+
+```
+
+
+----------------
+

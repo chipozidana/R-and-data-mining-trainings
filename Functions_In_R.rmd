@@ -1,0 +1,19 @@
+---
+title: "Function and Distributions in R"
+output: html_document
+---
+
+## Writing functions in R
+
+
+```{r ffunction}
+f1=function(x){
+  sin (x^2)*cos(sqrt(x^4+3)-x^2)-x +1
+  }
+x=seq(-3, 3, by = 0.1)
+y1= f1(x)
+plot(x,y1)
+
+```
+
+

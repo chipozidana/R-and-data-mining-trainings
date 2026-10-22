@@ -1,0 +1,110 @@
+---
+title: "Introductory R Worshop for Statistical data Analysis"
+author: "DR C. ZIDANA"
+date: "BIUST"
+output:
+  beamer_presentation:
+    theme: "AnnArbor"
+    colortheme: whale
+    fonttheme: serif
+    keep_tex: yes
+    toc: yes
+    #fig_width: 6cm 
+   #fig_height: 4cm
+  slidy_presentation: default
+---
+
+```{r gnn, echo=FALSE, include=FALSE}
+knitr::opts_chunk$set(fig.width=8, fig.height=4.8) 
+
+```
+
+## **Introduction**
+
+# **What is R**
+
+-   According to their site [**The R - Project for Statistical Computing**](https://www.r-project.org/):
+
+    > 1.  "R is a language and environment for statistical computing and graphics."
+    > 2.  "R provides a wide variety of statistical (linear and nonlinear modelling, classical statistical tests, time-series analysis, classification, clustering, ...) and graphical techniques, and is highly extensible."
+    > 3.  "One of R's strengths is the ease with which well-designed publication-quality plots can be produced, including mathematical symbols and formulae where needed."
+
+-   R is a programming language.
+
+-   It provides a free software environment for statistical computing and graphics.
+
+-   We can write all the latest statistical and graphical programs using R.
+
+-   Can be used for Manuscript writing, preparing slides (**Rmarkdown/Quarto**)
+
+# **R is free**
+
+-   Download R from <https://cran.r-project.org>
+
+-   Install RStudio IDE (an R Integrated Development Environment tool)
+
+<http://www.rstudio.com/products/rstudio/download>
+
+------------------------------------------------------------------------
+
+# **R is a function language**
+
+-   All commands in R are regarded as functions.
+
+-   \texttt{plot(x, y)} produces a scatter plot of \texttt{x} vs. \texttt{y}.
+
+-   Help is also a function. To obtain help on the function plot use help(plot). To obtain general help use help(), i.e.use the function help with a null argument.
+
+-   To end a session in R use the function quit().
+
+**R is an object orientated language**
+
+-   All entities in R are objects.
+-    This includes vectors, matrices, data arrays, graphs, functions, and results of an analysis.
+
+------------------------------------------------------------------------
+
+## **Who Uses R?**
+
+-   Data analysis
+-   Statistical inference
+-   Machine learning algorithms/ Deep Learning
+-   Time series forecasting
+
+**ME,ALL** ![](allprof.jpg){width="538"}**AND YOU**
+
+------------------------------------------------------------------------
+
+# **Why R**
+
+![](C:/Users/zidanac/OneDrive%20-%20biust.ac.bw/BIUST/STAT305%20STATISTICAL%20METHODS%20AND%20COMPPUTING/R%20stuff/whyRR.png)
+
+------------------------------------------------------------------------
+
+# **Advantages of using R**
+
+-   It’s open-source. No fees or licenses are needed
+
+-   It’s platform-independent. R runs on all operating systems
+
+-   It has lots of packages. For example, the R language has more than 10,000 packages stored in the CRAN repository, and the number is continuously increasing.
+
+-   R shines in Statistical analysis and data science
+
+-   It’s well suited for Machine Learning- predictions, classification , clustering, artificial Neural Networks
+
+-   Good data wrangling- turn unstructured, messy data into a structured format.
+
+-   R is still growing.
+
+------------------------------------------------------------------------
+
+# R platforms
+
+-   R console
+
+-   R studio
+
+-   R markdown
+
+-   Quarto

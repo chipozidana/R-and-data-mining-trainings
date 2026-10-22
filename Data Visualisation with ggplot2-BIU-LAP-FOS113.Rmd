@@ -1,0 +1,427 @@
+---
+title: '**Data Visualisation in R using ggplot2**'
+institute: "ZIDMA"
+author: "Chipo Zidana"
+output:  
+  beamer_presentation:
+    theme: AnnArbor
+    colortheme: dolphin
+    fonttheme: serif
+    keep_tex: yes
+    slide_level: 2
+ 
+---
+
+## **What is Data visualisation?**
+
+- **Data visualisation** practice of translating information into a visual context
+- a step in data science process
+- It uses visual elements like **charts, graphs, dashboards, info graphics and maps**
+- **Goal**:identify patterns, trends and outlier in data
+
+- **Big data is here!!!** call for better tools
+
+ **Tell your story right** 
+ 
+- Marry the data and the visuals
+-  delicate balancing act between form and function
+- its an art of great analysis and story telling
+
+---------------------
+
+## **Who need data Visualisation?**
+
+**ME,ALL** ![](allprof.jpg)**AND YOU**
+
+---------------------------
+ 
+## **Data Talks**
+
+![](datatalk1.png)
+
+--------------------
+
+## **Why Data Visualisation**
+
+- “A good sketch is better than a long speech.”
+
+- Sketching out our data by visualizing is more impactful than simply describing the patterns and trends we find.
+
+- "The simple graph has brought more information to the data analyst’s mind than any other device." --- **John Tukey**
+
+- it’s easier to learn from something that we can see rather than read
+
+- **We need a powerful too!!**In R data visualisation is a snap using
+1. Base R
+2. Lattice
+3. Grid
+4. **ggplot2** 
+
+---------------------
+
+## **Why ggplot2**
+
+- Uses the grammar of graphics - Easy and layers tell the complete story
+
+- "It can do quick-and-dirty and complex"-Mendy Mejia
+
+- Easy superposition, faceting, Automatic legends, colours, etc.ie Multivariate exploration is greatly simplified.
+
+- Store any ggplot2 object for modification or future recall. Super useful for packages.
+
+- Lots of users (less bugs, more help on Stack Overflow).
+
+- Lots of extensions.ggtheme, ggrepel etc
+
+- flexible- Nice saving option
+
+- Plots can evolve and devolve with minimal changes
+
+
+-----------------------------------
+
+**What does ggplot stand for?**
+
+- A Grammar of graphics 
+
+- A grammar of graphics defines the rules of structuring mathematics and aesthetic elements into a meaningful graph.
+
+- Leland Wilkinson (2005) designed the grammar upon which ggplot2 is based.
+
+- **ggplot2** package follows and describes data in the graph aspects
+
+--------------------
+
+
+## **General aspects/What is in Graph?**
+
+- there are many type of visualisations but we can generalise as follows
+
+```{r graph1, cache=FALSE, echo=FALSE, fig.width =6, fig.height =3.05}
+x= c(1,4,3,5,6)
+y= c(1,3,5,1,2)
+plot(x, y, type = "l", lty = 1)
+```
+
+------------------------
+
+
+## **GGplot2 Grammar aspects/Layers**
+
+1. **Data**: variables mapped to aesthetic features of the graph.
+2. **Geoms**: objects/shapes on the graph.
+3. **Stats**: statistical transformations that summarize data,(e.g mean, confidence intervals).
+4. **Scales**: mappings of aesthetic values to data values. Legends and axes visualize scales.
+5. **Coordinate systems**: the plane on which data are mapped on the graphic.
+6. **Faceting**: splitting the data into subsets to create multiple variations of the same graph (paneling).
+
+- **ANY Plot can be described uniquely as a combination of these aspects parameters with layers**.
+ 
+
+-----------------------
+
+## **ggplot2 Aspects: Plot = data + Aesthetics + Geometry**
+
+- *Data* -data frame/table
+- *Aesthetics* - indicate x and y variables, control colour, size and shape
+- *geometry* - defines the type of graphics (histogram, box plot, line plot, density plot, dot plot, ….)
+
+\begin{eqnarray*}
+- \mathbf{ggplot}(data = <\mathbf{DATA}>)+\\\nonumber
+ <\mathbf{GEOM\;FUNCTION>}(\\\nonumber
+     mapping = aes(<MAPPINGS>),\\\nonumber
+     stat = <STAT>, \\\nonumber
+     position = <POSITION>) +\\\nonumber
+  <\mathbf{COORDINATE\; FUNCTION}> +\\\nonumber
+  <\mathbf{FACET\; FUNCTION}>
+\end{eqnarray*}
+
+--------------------------------
+
+## **DATA**
+
+- Data should be tidy/ clean (**Use dplyr to re arrange data tidy -disadvantage**)
+- Tidy data is easier to work and work with ie:
+1. Each variables are represent a column
+2. each row present an observation
+3. each value has a unique column and row
+- import and tidy your data before visualising; 
+- **DATA CLEANING IS VITAL**
+
+------------------
+
+## **TIDY DATA**
+
+```{r tidyaa, echo=FALSE, message=FALSE}
+
+#imported data
+library(readr)
+Cardi0_fit <- read_csv("C:/Users/zidanac/OneDrive - biust.ac.bw/ZIDMA/CardioGoodFitness.csv")
+
+head(Cardi0_fit)
+
+```
+
+----------------
+
+## **The ggplot() structure**
+
+- In the ggplot() function - specify the data set that holds the variables we will be mapping to aesthetics, the visual properties of the graph. 
+
+- The data set must be a data.frame object.
+
+- **ggplot(data, aes(x$=$xvar, y$=$yvar))**
+
+1. data- data frame
+2. x and y: aesthetics that position objects on the graph
+3. xvar and yvar: names of variables in data mapped to x and y 
+
+- **NB:** aes are specified inside aes(), which is itself nested inside of ggplot().
+- aesthetics specified inside of ggplot() are inherited by subsequent layer
+
+----------------------
+
+## **Global GGplot**
+
+```{r , fig.width =6, fig.height =3.05}
+ggplot(data = Cardi0_fit, aes(x = Fitness, y = Usage)) 
+
+```
+
+-------------------------------
+
+## **Add Geom function**
+
+- define geometries, - compute summary statistics, -
+- define what scales to use, - or even change styles.
+
+![](chart1.png)
+
+-----------------------------
+
+**The Cardio_fit Data
+
+- We want to answer some of the business question using graphics
+
+1. Is the a relationship between Income and fitness
+
+
+------------------------------
+
+
+1. Scatter Plot: geom_point()
+
+- Is there a relation between age and Miles covered?
+
+
+```{r gmfn, fig.width =7, fig.height =4.0}
+
+ggplot(data = Cardi0_fit, aes(x = Age, y = Miles))+
+  geom_point()
+
+
+```
+
+
+-----------------------
+
+
+## **Add colour**
+
+
+```{r , colorcc, fig.height=3.0, fig.width=6.0}
+ggplot(data = Cardi0_fit, aes(x = Age, y = Miles, 
+       color= Product)) + geom_point()
+
+```
+
+
+---------------------------
+
+
+## **Custom the graph**
+
+- Name the ggplot plot and custom it 
+
+
+```{r  cc, fig.height=3.0, fig.width=6 }
+
+g= ggplot(data = Cardi0_fit, aes(x = Age, y = Miles, 
+       color= Product)) + geom_point()
+plot(g)
+
+```
+
+---------------------------
+
+## **Change background**
+
+- backgraound themes can be changed to different ways:
+
+- **eg:** theme_bw() / theme_classic()
+
+```{r , cbw, fig.height=3.05, fig.width=6}
+
+g+theme_bw()
+
+```
+
+
+------------------------
+
+## **Add Another Geom function**
+
+2. Line graph: geom_line()
+
+```{r , geomlayer, fig.height=3.1, fig.width=6 }
+
+g+theme_bw()+geom_line()
+
+```
+
+---------------------
+
+
+
+## **Change size of points and lines**
+
+```{r , sizegeom ,fig.height=3.0, fig.width=6}
+g+theme_bw()+geom_line(size =2)
+
+```
+
+-----------------
+
+## **Add Title and Axis labels**
+
+```{r , labesr,fig.width =6, fig.height =3.0  }
+gg=g+theme_bw()+ labs(title="Age and Distance Covered", 
+    subtitle="Cardiofit dataset",y="Miles", 
+    x="Age", caption="CardioFit Insights")
+gg
+```
+
+----------------------
+
+## **Scale reservesing**
+
+- If you need to reverse the scale, use scale_x_reverse().
+
+```{r , reverse ,fig.width =6, fig.height =3.0}
+gg+  scale_x_reverse()
+
+```
+
+-------------------
+
+## **Facets**
+
+```{r facetsss, fig.width =6, fig.height =3.0}
+gg+facet_grid(~Gender)+geom_line()
+
+```
+
+
+--------------------
+
+**Layered density plots**
+
+
+```{r desityplot, fig.width =6, fig.height =3.0}
+
+ Cardi0_fit|> ggplot(aes(x=Income, fill=Product)) +
+  geom_density(alpha=0.3)
+
+```
+
+
+-------------
+
+## **Flexibility**
+
+```{r layerred densities, fig.width =6, fig.height =3.0}
+data(diamonds)
+ggplot(data=diamonds, aes(x=price, fill=cut)) +
+  geom_density(alpha=0.3)
+
+```
+
+---------------
+
+## **Heat Map**
+
+```{r heatmap,fig.width =7, fig.height =3.0 }
+data("diamonds")
+ggplot(diamonds,aes(x = cut, y = color, fill = carat))+
+     geom_tile(color = "black") +
+    scale_fill_gradient(low = "white",  high = "blue") +
+    coord_fixed()
+
+```
+
+
+
+----------------------------
+
+# Box Plot
+
+- Which product is for the rich and poor?
+## **geom_boxplot()**
+
+```{r bocpl,fig.width =6, fig.height =3.0 } 
+bx1 = ggplot(data = Cardi0_fit, aes(x = Product, y =Income)) + 
+  geom_boxplot()+
+  facet_wrap(~Gender) + 
+  theme_bw()+ 
+  labs(title = "Income by Product Boxplot", x="Product", y="Income")
+bx1
+
+```
+
+----------------
+
+**Bar Plot
+
+```{r barppl,fig.width =6, fig.height =3.0 } 
+bx1 = ggplot(data = Cardi0_fit, aes(x = Product, y =Income)) + 
+  geom_boxplot()+
+  facet_wrap(~Gender) + 
+  theme_bw()+ 
+  labs(title = "Income by Product Boxplot", x="Product", y="Income")
+bx1
+
+
+----------------
+
+## **Your Turn :Use Gapminder data**
+ 
+```{r gggline, warning=FALSE, cache=FALSE, message=FALSE}
+library(gapminder)
+library(dplyr)
+ df <- gapminder::gapminder
+ df1= df%>%filter(year ==1992)
+ df1
+```
+
+---------------------------
+
+## **Produce this Plot**
+
+```{r gapplot, echo=FALSE, fig.width =7, fig.height =3.0}
+library(ggplot2)
+   ggplot(df1, aes(gdpPercap, lifeExp, color = continent, size =pop))+
+   geom_point()+
+   labs(title = "Gapminder for 1992", x = "Gross Domestic Product", y= "Life expectancy at birth (years)")
+```
+
+-----------------
+
+
+## **THANK YOU**
+
+
+- **Thank You ALL**
+
+
+
+

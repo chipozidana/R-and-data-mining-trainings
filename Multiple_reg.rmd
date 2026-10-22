@@ -1,0 +1,345 @@
+---
+title: "Multiple Linear Regression"
+author: "Zidana"
+date: "BIUST"
+output:
+  beamer_presentation: default
+  powerpoint_presentation: default
+---
+
+
+## Multiple Regression
+
+A. Condit
+
+
+```{r hhh,  warning=FALSE, message=FALSE}
+library(tidyverse)
+library(datarium) #3data
+library(caret) ##traing split
+library(leaps) #stepwise regression
+library(MASS)
+data("marketing", package = "datarium") ## marketing data in datarim
+head(marketing, 4)
+
+```
+
+
+-----------------
+
+**Correlations**
+
+
+```{r cohhh}
+cor1= cor(marketing, method = "pearson")
+library(corrplot)
+```
+
+----------------------------
+
+**Correlation Plot**
+
+```{r crplot1}
+
+corrplot(as.matrix(cor1), type="upper", order="hclust", 
+          sig.level = 0.05, insig = "blank")
+
+
+```
+
+
+--------------------------
+
+**Models** expected
+
+- We want to build a model for estimating sales based on the advertising budget invested in youtube, facebook and newspaper, as follow:
+
+$$Sales = b_0 =b_1 *youtube+b_1*facebook+b_3*newpaper$$
+
+```{r mod1}
+model <- lm(sales ~ youtube + facebook + newspaper, data = marketing)
+
+```
+
+-------------------
+
+```{r summ}
+summary(model)
+```
+
+------------------
+
+**Interpretations**
+
+1. Examine the F statistic and associated p value: 
+
+-if $p<0.05$- at least, one of the predictor variables is significantly related to the outcome variable.
+
+2. Check which predictors are significant- examine the coefficients table. `summary(model)$coefficients`.
+
+3.Interpret coeff:- as the average effect on y of a one unit increase in predictor, holding all other predictors fixed.
+
+4. Remove non-significant regressors from the model- since newspaper is not we reve it from the model
+
+-----------------------------
+
+**Reduced Models by Removing Non Significant**
+
+- Reve terms with Non signefcant Terms
+
+- Chech on the F statistic
+
+- Check of Adj R sqaure
+
+```{r mod2xc}
+model2 <- lm(sales ~ youtube + facebook, data = marketing)
+```
+
+-----------------
+
+```{r mod2sm}
+summary(model2)
+```
+
+------------------
+
+**Confidence intervals**
+
+```{r mod2sd}
+confint(model2)
+```
+
+-------------
+
+
+# Model Diagnostic
+
+1. **Multiple colliniearity**
+
+```{r mod2}
+cor1
+```
+
+
+-----------------------
+
+**Stepwise Regression**
+
+- There are many function to compute stepwise regression in R including the following:
+
+1. `-stepAIC()` [MASS package], which choose the best model by AIC.
+
+2. `regsubset` in Leaps package
+
+
+```{r stpweis}
+# Fit the full model 
+full.model <- model
+# Stepwise regression model
+step.model <- stepAIC(full.model, direction = "both", 
+                      trace = FALSE)
+```
+
+---------------------------
+
+```{r stepsaic1}
+summary(step.model)
+
+```
+-----------------------
+
+**BACKWARD ELIMINATION**
+
+- stepAIC can also be used for backward regression
+
+```{r BACKWARD}
+b.model <- stepAIC(full.model, direction = "backward", trace = FALSE)
+summary(b.model)
+
+```
+
+--------------------------------
+
+**Forward Regression**
+
+
+```{r frowardreg}
+f.model <- stepAIC(full.model, direction = "forward", 
+                      trace = FALSE)
+summary(f.model)
+
+```
+
+
+--------------------------------------
+
+# Using Leap package
+
+- regsubsets() [leaps package],
+
+- stepwise regression(both forward and backward)
+
+```{r regstp}
+library(leaps)
+step.model1 <- regsubsets(sales~.,
+                          method = "seqrep",
+                          data = marketing, 
+                      nvmax =5)
+
+```
+
+-----------------
+
+```{r steleap1}
+summary(step.model1)
+```
+
+-----------------
+
+**Forward Regression Using Leaps**
+
+```{r otherbac}
+# Set seed for reproducibility
+set.seed(123)
+# Set up repeated k-fold cross-validation
+train.control <- trainControl(method = "cv", number = 10)
+# Train the model
+F.leap <- train(sales~., data = marketing,
+                    method = "leapForward", 
+                    tuneGrid = data.frame(nvmax = 1:3),
+                    trControl = train.control
+                    )
+
+```
+
+--------------------
+
+**Leaps Results**
+
+```{r leap2}
+F.leap$results
+```
+
+
+---------------
+
+**Leaps Final models**
+
+- An asterisk specifies that a given variable is included in the corresponding model. 
+
+-For example, it can be seen that the best 2-variables model contains facebook and youtube
+
+```{r leapsfin}
+
+coef(F.leap$finalModel, 2)
+##OR
+model.leap <- lm(sales ~ youtube + facebook ,
+                 data = marketing)
+
+```
+
+----------------
+
+**Leaps final model summary**
+
+```{r lPm}
+summary(model.leap)
+
+```
+
+
+------------------
+
+# Multiple regression with Categorical Variables
+
+
+**The Pizza Hut data**
+
+```{r pzza, message=FALSE, warning=FALSE}
+pzza = read_csv("C:/Users/zidanac/OneDrive - biust.ac.bw/BIUST/STAT 303 Linear regression/R lectures/PizzaHut.csv")
+pzza$Gender=as.factor(pzza$Gender)
+pzza$Purchase=as.factor(pzza$Purchase)
+str(pzza)
+```
+
+
+---------------------
+
+
+```{r pzzamof}
+mod_pzz = lm(Price~., data= pzza)
+summary(mod_pzz)
+
+```
+
+
+----------------------
+
+**The Model**
+
+```{r pmod}
+
+anova(mod_pzz)
+
+```
+
+------------------
+
+**Interpretation**
+
+- Categorical comparison
+
+------------------
+
+#Logistic Regression
+
+
+```{r pzmof}
+mod_log = glm(Purchase~., data= pzza, family = "binomial")
+mod_log
+```
+
+--------------------
+
+
+
+```{r pzzamof1}
+summary(mod_log)
+
+```
+
+
+
+----------------
+
+
+```{r confff}
+exp(mod_log$coefficients)
+```
+
+
+----------------------
+
+**Using Neural networks**
+
+```{r pznn234}
+require(neuralnet)
+mod_nn1 = neuralnet(sales ~ youtube + facebook+newspaper, data = marketing, hidden=3, act.fct = "logistic",    linear.output = FALSE)
+mod_nn2 = neuralnet(sales ~ youtube + facebook, data = marketing, hidden=3, act.fct = "logistic",    linear.output = FALSE)
+plot(mod_nn1)
+```
+
+----------------
+
+
+
+```{r pznn11}
+
+plot(mod_nn2)
+
+```
+
+
+
+
+--------------
